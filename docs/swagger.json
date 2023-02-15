@@ -16,25 +16,65 @@
   "paths": {
     "/championship": {
       "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Championship"
+        ],
         "summary": "Championship holds all data relevant to a soccer league.",
-        "operationId": "championship-tag",
+        "operationId": "getChampionship",
         "responses": {
           "200": {
-            "$ref": "#/responses/championshipResponse"
+            "$ref": "#/responses/ChampionshipResponse"
           }
         }
       }
     }
   },
   "definitions": {
-    "ChampionshipResponse": {
-      "description": "ChampionshipResponse represents a body of Championship reponse",
+    "Championship": {
+      "description": "Championship represents a body of Championship reponse",
+      "type": "object",
+      "required": [
+        "clubs"
+      ],
+      "properties": {
+        "clubs": {
+          "$ref": "#/definitions/Clubs"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
+    "Club": {
+      "description": "Club represents a football club",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "Name of club",
+          "type": "string",
+          "x-go-name": "Name"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
+    "Clubs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Club"
+      },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
     }
   },
   "responses": {
-    "championshipResponse": {
-      "description": "This text will appear as description of your response body."
+    "ChampionshipResponse": {
+      "description": "This text will appear as description of your response body.",
+      "schema": {
+        "$ref": "#/definitions/Championship"
+      }
     }
   }
 }
