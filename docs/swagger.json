@@ -1,0 +1,40 @@
+{
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "This API provides an access to data relevant to a championship.",
+    "title": "Championship package.",
+    "version": "1.0.0"
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "paths": {
+    "/championship": {
+      "get": {
+        "summary": "Championship holds all data relevant to a soccer league.",
+        "operationId": "championship-tag",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/championshipResponse"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ChampionshipResponse": {
+      "description": "ChampionshipResponse represents a body of Championship reponse",
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    }
+  },
+  "responses": {
+    "championshipResponse": {
+      "description": "This text will appear as description of your response body."
+    }
+  }
+}
