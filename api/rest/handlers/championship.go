@@ -14,13 +14,14 @@ import (
 //		- application/json
 //
 //	responses:
-//		200: ChampionshipResponse
+//		200: GetChampionshipResponse
 func GetChampionship(c *gin.Context) {
-	ch := models.ChampionshipResponseWrapper{
-		Body: models.Championship{
-			Clubs: models.Clubs{
+	ch := models.GetChampionshipResponse{
+		Championship: models.ChampionshipDTO{
+			Clubs: models.ClubsDTO{
 				{Name: "NK Radnicki"},
 			},
+			Name: "UEFA",
 		},
 	}
 	c.JSON(http.StatusOK, ch)

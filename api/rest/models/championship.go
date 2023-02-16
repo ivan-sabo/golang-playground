@@ -1,26 +1,31 @@
 package models
 
 // This text will appear as description of your response body.
-// swagger:response ChampionshipResponse
-type ChampionshipResponseWrapper struct {
+// swagger:response GetChampionshipResponse
+type GetChampionshipResponseWrapper struct {
 	// in: body
-	Body Championship
+	Body GetChampionshipResponse
+}
+
+type GetChampionshipResponse struct {
+	Championship ChampionshipDTO `json:"championship"`
 }
 
 // Championship represents a body of Championship reponse
-// swagger:model
-type Championship struct {
+type ChampionshipDTO struct {
 	// Collection of clubs
 	// required: true
-	Clubs Clubs `json:"clubs"`
+	Clubs ClubsDTO `json:"clubs"`
+
+	// Name of the championship
+	Name string `json:"name"`
 }
 
 // Clubs is a collection of Club type
-
-type Clubs []Club
+type ClubsDTO []ClubDTO
 
 // Club represents a football club
-type Club struct {
+type ClubDTO struct {
 	// Name of club
 	//
 	// required: true
