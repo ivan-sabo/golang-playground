@@ -11,18 +11,28 @@ type Config struct {
 	DbName   string
 	Username string
 	Password string
-	IP       string
+	Host     string
 	Port     string
 	Protocol string
 }
 
 func GetConnection(c Config) (*gorm.DB, error) {
+	port := "3306"
+	if c.Port != "" {
+		port = c.Port
+	}
+
+	protocol := "tcp"
+	if c.Protocol != "" {
+		protocol = c.Protocol
+	}
+
 	dsn := fmt.Sprintf("%s:%s@%s(%s:%s)/%s",
 		c.Username,
 		c.Password,
-		c.Protocol,
-		c.IP,
-		c.Port,
+		protocol,
+		c.Host,
+		port,
 		c.DbName,
 	)
 	return gorm.Open(mysql.Open(dsn))

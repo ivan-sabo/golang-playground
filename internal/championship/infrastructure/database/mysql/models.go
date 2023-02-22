@@ -7,25 +7,25 @@ import (
 	"gorm.io/gorm"
 )
 
-type ClubsGorm []ClubGorm
+type Clubs []Club
 
-type ClubGorm struct {
-	ID        uint `gorm:"primaryKey"`
+type Club struct {
+	ID        string `gorm:"primaryKey"`
 	Name      string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt
 }
 
-func (c *ClubGorm) ToEntity() domain.Club {
+func (c *Club) ToEntity() domain.Club {
 	return domain.Club{
 		ID:   c.ID,
 		Name: c.Name,
 	}
 }
 
-func (cs ClubsGorm) ToEntity() domain.Clubs {
-	clubs := make(domain.Clubs, len(cs))
+func (cs Clubs) ToEntity() domain.Clubs {
+	clubs := make(domain.Clubs, 0, len(cs))
 	for _, c := range cs {
 		clubs = append(clubs, c.ToEntity())
 	}

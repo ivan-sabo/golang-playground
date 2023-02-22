@@ -7,6 +7,10 @@ type Championship struct {
 type Clubs []Club
 
 type Club struct {
-	ID   uint
+	ID   string
 	Name string
+}
+
+type ChampionshipRepo interface {
+	GetClubs() (Clubs, error)
 }
