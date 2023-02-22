@@ -6,12 +6,19 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewRestServer(dbConn *gorm.DB) *gin.Engine {
-	s := gin.Default()
+type RestServer struct {
+	Router   *gin.Engine
+	SqlStore *gorm.DB
+}
 
+func NewRestServer(dbConn *gorm.DB) *RestServer {
+	s := gin.Default()
 	s.Use(cors.Default())
 
 	attachRoutes(s, dbConn)
 
-	return s
+	return &RestServer{
+		Router:   s,
+		SqlStore: dbConn,
+	}
 }

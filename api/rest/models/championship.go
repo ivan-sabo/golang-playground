@@ -1,20 +1,20 @@
 package models
 
-import "github.com/ivan-sabo/golang-playground/internal/championship/domain"
+import (
+	"time"
+
+	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
+)
 
 // This text will appear as description of your response body.
-// swagger:response GetChampionshipResponse
-type GetChampionshipResponseWrapper struct {
+// swagger:response GetChampionshipsResponse
+type GetChampionshipsResponseWrapper struct {
 	// in: body
-	Body GetChampionshipResponse
+	Body GetChampionshipsResponse
 }
 
-type GetChampionshipResponse struct {
-	Championship ChampionshipDTO `json:"championship"`
-}
-
-func NewChampionshipDTO(domain.Championship) ChampionshipDTO {
-	return ChampionshipDTO{}
+type GetChampionshipsResponse struct {
+	Championships ChampionshipsDTO `json:"championships"`
 }
 
 func NewClubDTO(c domain.Club) ClubDTO {
@@ -32,20 +32,43 @@ func NewClubsDTO(cs domain.Clubs) ClubsDTO {
 	return clubs
 }
 
-// Championship represents a body of Championship reponse
-type ChampionshipDTO struct {
-	// Collection of clubs
-	// required: true
-	Clubs ClubsDTO `json:"clubs"`
+type ChampionshipsDTO []ChampionshipDTO
 
-	// Name of the championship
+type ChampionshipDTO struct {
+	// required: true
+	ID string `json:"id"`
+
+	// required: true
 	Name string `json:"name"`
+
+	CreatedAt time.Time `json:"created_at"`
+
+	UpdateAt time.Time `json:"updated_at"`
+
+	DeletedAt time.Time `json:"deleted_at"`
 }
 
-// Clubs is a collection of Club type
+func NewChampionshipDTO(c domain.Championship) ChampionshipDTO {
+	return ChampionshipDTO{
+		ID:        c.ID,
+		Name:      c.Name,
+		CreatedAt: c.CreatedAt,
+		UpdateAt:  c.UpdatedAt,
+		DeletedAt: c.DeletedAt,
+	}
+}
+
+func NewChampionshipsDTO(cs domain.Championships) ChampionshipsDTO {
+	championships := make(ChampionshipsDTO, 0, len(cs))
+	for _, c := range cs {
+		championships = append(championships, NewChampionshipDTO(c))
+	}
+
+	return championships
+}
+
 type ClubsDTO []ClubDTO
 
-// Club represents a football club
 type ClubDTO struct {
 	// Name of club
 	//

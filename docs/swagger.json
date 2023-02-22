@@ -26,7 +26,7 @@
         "operationId": "getChampionship",
         "responses": {
           "200": {
-            "$ref": "#/responses/GetChampionshipResponse"
+            "$ref": "#/responses/GetChampionshipsResponse"
           }
         }
       }
@@ -34,61 +34,60 @@
   },
   "definitions": {
     "ChampionshipDTO": {
-      "description": "Championship represents a body of Championship reponse",
       "type": "object",
       "required": [
-        "clubs"
-      ],
-      "properties": {
-        "clubs": {
-          "$ref": "#/definitions/ClubsDTO"
-        },
-        "name": {
-          "description": "Name of the championship",
-          "type": "string",
-          "x-go-name": "Name"
-        }
-      },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
-    },
-    "ClubDTO": {
-      "description": "Club represents a football club",
-      "type": "object",
-      "required": [
+        "id",
         "name"
       ],
       "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "CreatedAt"
+        },
+        "deleted_at": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "DeletedAt"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
         "name": {
-          "description": "Name of club",
           "type": "string",
           "x-go-name": "Name"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "UpdateAt"
         }
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
     },
-    "ClubsDTO": {
-      "description": "Clubs is a collection of Club type",
+    "ChampionshipsDTO": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/ClubDTO"
+        "$ref": "#/definitions/ChampionshipDTO"
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
     },
-    "GetChampionshipResponse": {
+    "GetChampionshipsResponse": {
       "type": "object",
       "properties": {
-        "championship": {
-          "$ref": "#/definitions/ChampionshipDTO"
+        "championships": {
+          "$ref": "#/definitions/ChampionshipsDTO"
         }
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
     }
   },
   "responses": {
-    "GetChampionshipResponse": {
+    "GetChampionshipsResponse": {
       "description": "This text will appear as description of your response body.",
       "schema": {
-        "$ref": "#/definitions/GetChampionshipResponse"
+        "$ref": "#/definitions/GetChampionshipsResponse"
       }
     }
   }

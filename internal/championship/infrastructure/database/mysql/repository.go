@@ -1,8 +1,6 @@
 package mysql
 
 import (
-	"log"
-
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 	"gorm.io/gorm"
 )
@@ -17,15 +15,13 @@ func NewChampionshipMySQLRepo(conn *gorm.DB) *ChampionshipMySQLRepo {
 	}
 }
 
-func (r ChampionshipMySQLRepo) GetClubs() (domain.Clubs, error) {
-	var clubs Clubs
-	tx := r.conn.Model(&Club{}).Find(&clubs)
+func (r ChampionshipMySQLRepo) GetChampionships() (domain.Championships, error) {
+	var championships Championships
+	tx := r.conn.Model(&Championship{}).Find(&championships)
 
 	if tx.Error != nil {
-		return domain.Clubs{}, tx.Error
+		return domain.Championships{}, tx.Error
 	}
 
-	log.Printf("got %d clubs", len(clubs))
-
-	return clubs.ToEntity(), nil
+	return championships.ToEntity(), nil
 }

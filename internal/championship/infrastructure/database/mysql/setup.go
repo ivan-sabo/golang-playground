@@ -7,6 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var defaultPort = "3306"
+
 type Config struct {
 	DbName   string
 	Username string
@@ -17,7 +19,7 @@ type Config struct {
 }
 
 func GetConnection(c Config) (*gorm.DB, error) {
-	port := "3306"
+	port := defaultPort
 	if c.Port != "" {
 		port = c.Port
 	}
@@ -27,7 +29,7 @@ func GetConnection(c Config) (*gorm.DB, error) {
 		protocol = c.Protocol
 	}
 
-	dsn := fmt.Sprintf("%s:%s@%s(%s:%s)/%s",
+	dsn := fmt.Sprintf("%s:%s@%s(%s:%s)/%s?parseTime=true",
 		c.Username,
 		c.Password,
 		protocol,

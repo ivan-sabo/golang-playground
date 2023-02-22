@@ -6,3 +6,6 @@ swagger-generate: check-swagger
 
 swagger-serve: check-swagger
 	swagger serve -F=swagger docs/swagger.json
+
+run:
+	go run cmd/api/main.go

@@ -36,19 +36,16 @@ func (gr *ChampionshipHandler) AddChampionshipRoutes() {
 //		- application/json
 //
 //	responses:
-//		200: GetChampionshipResponse
+//		200: GetChampionshipsResponse
 func (gr *ChampionshipHandler) GetChampionship(c *gin.Context) {
-	clubs, err := gr.Repo.GetClubs()
+	championships, err := gr.Repo.GetChampionships()
 	if err != nil {
 		log.Printf("An error occured: %v", err)
 		return
 	}
 
-	ch := models.GetChampionshipResponse{
-		Championship: models.ChampionshipDTO{
-			Clubs: models.NewClubsDTO(clubs),
-			Name:  "UEFA",
-		},
+	ch := models.GetChampionshipsResponse{
+		Championships: models.NewChampionshipsDTO(championships),
 	}
 	c.JSON(http.StatusOK, ch)
 }

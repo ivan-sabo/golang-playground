@@ -7,7 +7,7 @@ import (
 
 func main() {
 	dbConf := mysql.Config{
-		DbName:   "golang-playground",
+		DbName:   "golang_playground",
 		Username: "root",
 		Password: "test",
 		Host:     "localhost",
@@ -20,5 +20,5 @@ func main() {
 
 	s := rest.NewRestServer(dbConn)
 
-	s.Run(":8080")
+	s.Router.Run(":8080")
 }

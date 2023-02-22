@@ -32,3 +32,32 @@ func (cs Clubs) ToEntity() domain.Clubs {
 
 	return clubs
 }
+
+type Championships []Championship
+
+type Championship struct {
+	ID        string `gorm:"primaryKey"`
+	Name      string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt
+}
+
+func (c *Championship) ToEntity() domain.Championship {
+	return domain.Championship{
+		ID:        c.ID,
+		Name:      c.Name,
+		CreatedAt: c.CreatedAt,
+		UpdatedAt: c.UpdatedAt,
+		DeletedAt: c.DeletedAt.Time,
+	}
+}
+
+func (cs Championships) ToEntity() domain.Championships {
+	championships := make(domain.Championships, 0, len(cs))
+	for _, c := range cs {
+		championships = append(championships, c.ToEntity())
+	}
+
+	return championships
+}
