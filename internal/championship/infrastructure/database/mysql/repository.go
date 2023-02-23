@@ -49,6 +49,18 @@ func (c ClubMySQLRepo) GetClub(id string) (domain.Club, error) {
 	var club Club
 	tx := c.conn.Where("id = ?", id).First(&club)
 
+	if tx.Error != nil {
+		return domain.Club{}, tx.Error
+	}
+
+	return club.ToEntity(), nil
+}
+
+func (c ClubMySQLRepo) CreateClub(dc domain.Club) (domain.Club, error) {
+	club := NewClub(dc)
+
+	tx := c.conn.Create(&club)
+
 	if tx.Error == gorm.ErrRecordNotFound {
 		return domain.Club{}, domain.ErrClubNotFound
 	}

@@ -3,6 +3,7 @@ package mysql
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 	"gorm.io/gorm"
 )
@@ -15,6 +16,13 @@ type Club struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt
+}
+
+func NewClub(c domain.Club) Club {
+	return Club{
+		ID:   uuid.NewString(),
+		Name: c.Name,
+	}
 }
 
 func (c *Club) ToEntity() domain.Club {

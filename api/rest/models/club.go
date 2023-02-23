@@ -2,7 +2,7 @@ package models
 
 import "github.com/ivan-sabo/golang-playground/internal/championship/domain"
 
-// This text will appear as description of your response body.
+// List of Clubs response.
 // swagger:response GetClubsResponse
 type GetClubsResponseWrapper struct {
 	// in: body
@@ -13,7 +13,7 @@ type GetClubsResponse struct {
 	Clubs ClubsDTO `json:"clubs"`
 }
 
-// This text will appear as description of your response body.
+// Single Club response
 // swagger:response GetClubResponse
 type GetClubResponseWrapper struct {
 	// in: body
@@ -47,4 +47,32 @@ func NewClubsDTO(cs domain.Clubs) ClubsDTO {
 	}
 
 	return clubs
+}
+
+// Single Club request
+// swagger:parameters CreateClub
+type PostClubRequestWrapper struct {
+	// in: body
+	Body PostClubRequest
+}
+
+type PostClubRequest struct {
+	Name string `json:"name"`
+}
+
+func (r PostClubRequest) ToEntity() domain.Club {
+	return domain.Club{
+		Name: r.Name,
+	}
+}
+
+// Create Club response
+// swagger:response PostClubResponse
+type PostClubResponseWrapper struct {
+	// in: body
+	Body PostClubResponse
+}
+
+type PostClubResponse struct {
+	Name string `json:"name"`
 }

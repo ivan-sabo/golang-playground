@@ -43,7 +43,7 @@ type ChampionshipRepo interface {
 type ClubRepo interface {
 	GetClubs(ClubFilter) (Clubs, error)
 	GetClub(string) (Club, error)
-	//CreateClub(Club) (Club, error)
+	CreateClub(Club) (Club, error)
 	//UpdateClub(Club) (Club, error)
 	//DeleteClub(int) error
 }

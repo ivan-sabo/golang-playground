@@ -28,10 +28,11 @@ func (ch *ClubHandler) AddClubRoutes() {
 
 	c.GET("/:id", ch.GetClub)
 	c.GET("", ch.GetClubs)
+	c.POST("", ch.PostClub)
 }
 
 // swagger:route GET /club Clubs getClubs
-// Club holds all data relevant to a football club.
+// Get a list of clubs.
 //
 //	Produces:
 //		- application/json
@@ -42,6 +43,7 @@ func (ch *ClubHandler) GetClubs(c *gin.Context) {
 	clubs, err := ch.Repo.GetClubs(domain.ClubFilter{})
 	if err != nil {
 		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
 		return
 	}
 
@@ -51,7 +53,7 @@ func (ch *ClubHandler) GetClubs(c *gin.Context) {
 }
 
 // swagger:route GET /club/{id} Clubs getClub
-// Club holds all data relevant to a football club.
+// Get a single club by ID
 //
 //	Consumes:
 //		- application/json
@@ -78,6 +80,7 @@ func (ch *ClubHandler) GetClub(c *gin.Context) {
 
 	club, err := ch.Repo.GetClub(id)
 	if err == domain.ErrClubNotFound {
+		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
 		return
 	}
@@ -89,5 +92,38 @@ func (ch *ClubHandler) GetClub(c *gin.Context) {
 
 	c.JSON(http.StatusOK, models.GetClubResponse{
 		Club: models.NewClubDTO(club),
+	})
+}
+
+// swagger:route POST /club Clubs CreateClub
+// Create a new Club
+//
+//	Consumes:
+//		- application/json
+//
+//	Produces:
+//		- application/json
+//
+//	responses:
+//		200: PostClubResponse
+//		500: ErrorResponse
+func (ch *ClubHandler) PostClub(c *gin.Context) {
+	var club models.PostClubRequest
+	err := c.ShouldBindJSON(&club)
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	dc, err := ch.Repo.CreateClub(club.ToEntity())
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusCreated, models.GetClubResponse{
+		Club: models.NewClubDTO(dc),
 	})
 }

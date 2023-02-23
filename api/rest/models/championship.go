@@ -6,7 +6,7 @@ import (
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 )
 
-// This text will appear as description of your response body.
+// List of championships
 // swagger:response GetChampionshipsResponse
 type GetChampionshipsResponseWrapper struct {
 	// in: body

@@ -39,17 +39,16 @@
         "tags": [
           "Clubs"
         ],
-        "summary": "Club holds all data relevant to a football club.",
+        "summary": "Get a list of clubs.",
         "operationId": "getClubs",
         "responses": {
           "200": {
             "$ref": "#/responses/GetClubsResponse"
           }
         }
-      }
-    },
-    "/club/{id}": {
-      "get": {
+      },
+      "post": {
+        "description": "Create a new Club",
         "consumes": [
           "application/json"
         ],
@@ -59,7 +58,38 @@
         "tags": [
           "Clubs"
         ],
-        "summary": "Club holds all data relevant to a football club.",
+        "operationId": "CreateClub",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/PostClubRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/PostClubResponse"
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/club/{id}": {
+      "get": {
+        "description": "Get a single club by ID",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Clubs"
+        ],
         "operationId": "getClub",
         "parameters": [
           {
@@ -74,6 +104,9 @@
             "$ref": "#/responses/GetClubResponse"
           },
           "404": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "500": {
             "$ref": "#/responses/ErrorResponse"
           }
         }
@@ -181,6 +214,26 @@
         }
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
+    "PostClubRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
+    "PostClubResponse": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
     }
   },
   "responses": {
@@ -191,21 +244,27 @@
       }
     },
     "GetChampionshipsResponse": {
-      "description": "This text will appear as description of your response body.",
+      "description": "List of championships",
       "schema": {
         "$ref": "#/definitions/GetChampionshipsResponse"
       }
     },
     "GetClubResponse": {
-      "description": "This text will appear as description of your response body.",
+      "description": "Single Club response",
       "schema": {
         "$ref": "#/definitions/GetClubResponse"
       }
     },
     "GetClubsResponse": {
-      "description": "This text will appear as description of your response body.",
+      "description": "List of Clubs response.",
       "schema": {
         "$ref": "#/definitions/GetClubsResponse"
+      }
+    },
+    "PostClubResponse": {
+      "description": "Create Club response",
+      "schema": {
+        "$ref": "#/definitions/PostClubResponse"
       }
     }
   }
