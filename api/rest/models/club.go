@@ -26,6 +26,15 @@ type GetClubResponse struct {
 
 type ClubsDTO []ClubDTO
 
+func NewClubsDTO(cs domain.Clubs) ClubsDTO {
+	clubs := make(ClubsDTO, 0, len(cs))
+	for _, c := range cs {
+		clubs = append(clubs, NewClubDTO(c))
+	}
+
+	return clubs
+}
+
 type ClubDTO struct {
 	ID string `json:"id"`
 
@@ -38,15 +47,6 @@ func NewClubDTO(c domain.Club) ClubDTO {
 		ID:   c.ID,
 		Name: c.Name,
 	}
-}
-
-func NewClubsDTO(cs domain.Clubs) ClubsDTO {
-	clubs := make(ClubsDTO, 0, len(cs))
-	for _, c := range cs {
-		clubs = append(clubs, NewClubDTO(c))
-	}
-
-	return clubs
 }
 
 // Single Club request
@@ -75,4 +75,40 @@ type PostClubResponseWrapper struct {
 
 type PostClubResponse struct {
 	Name string `json:"name"`
+}
+
+// Update Club request
+// swagger:parameters UpdateClub
+type PutClubRequestWrapper struct {
+	// in: body
+	Body PutClubRequest
+}
+
+type PutClubRequest struct {
+	Name string `json:"name"`
+}
+
+func (r PutClubRequest) ToEntity() domain.Club {
+	return domain.Club{
+		Name: r.Name,
+	}
+}
+
+// Create Club response
+// swagger:response PostClubResponse
+type PutClubResponseWrapper struct {
+	// in: body
+	Body PutClubResponse
+}
+
+type PutClubResponse struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+func NewPutClubResponse(c domain.Club) PutClubResponse {
+	return PutClubResponse{
+		ID:   c.ID,
+		Name: c.Name,
+	}
 }

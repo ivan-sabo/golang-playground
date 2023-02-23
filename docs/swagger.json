@@ -110,6 +110,48 @@
             "$ref": "#/responses/ErrorResponse"
           }
         }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Clubs"
+        ],
+        "summary": "Update existing club.",
+        "operationId": "UpdateClub",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/PutClubRequest"
+            }
+          },
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "PutClubResponse",
+            "schema": {
+              "$ref": "#/definitions/PutClubResponse"
+            }
+          },
+          "404": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
       }
     }
   },
@@ -234,6 +276,30 @@
         }
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
+    "PutClubRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
+    "PutClubResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
     }
   },
   "responses": {
@@ -264,7 +330,7 @@
     "PostClubResponse": {
       "description": "Create Club response",
       "schema": {
-        "$ref": "#/definitions/PostClubResponse"
+        "$ref": "#/definitions/PutClubResponse"
       }
     }
   }

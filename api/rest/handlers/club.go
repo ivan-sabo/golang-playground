@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"log"
 	"net/http"
 
@@ -26,9 +27,10 @@ func NewClubHandler(ginEngine *gin.Engine, dbConn *gorm.DB) ClubHandler {
 func (ch *ClubHandler) AddClubRoutes() {
 	c := ch.GinEngine.Group("/club")
 
-	c.GET("/:id", ch.GetClub)
-	c.GET("", ch.GetClubs)
-	c.POST("", ch.PostClub)
+	c.GET("/:id", ch.getClub)
+	c.PUT("/:id", ch.putClub)
+	c.GET("", ch.getClubs)
+	c.POST("", ch.postClub)
 }
 
 // swagger:route GET /club Clubs getClubs
@@ -39,7 +41,7 @@ func (ch *ClubHandler) AddClubRoutes() {
 //
 //	responses:
 //		200: GetClubsResponse
-func (ch *ClubHandler) GetClubs(c *gin.Context) {
+func (ch *ClubHandler) getClubs(c *gin.Context) {
 	clubs, err := ch.Repo.GetClubs(domain.ClubFilter{})
 	if err != nil {
 		log.Printf("an error occured: %v", err)
@@ -71,10 +73,11 @@ func (ch *ClubHandler) GetClubs(c *gin.Context) {
 //		200: GetClubResponse
 //		404: ErrorResponse
 //		500: ErrorResponse
-func (ch *ClubHandler) GetClub(c *gin.Context) {
+func (ch *ClubHandler) getClub(c *gin.Context) {
 	id, exist := c.Params.Get("id")
 	if !exist {
 		log.Printf("club id was not provided")
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing id parameter")))
 		return
 	}
 
@@ -107,7 +110,7 @@ func (ch *ClubHandler) GetClub(c *gin.Context) {
 //	responses:
 //		200: PostClubResponse
 //		500: ErrorResponse
-func (ch *ClubHandler) PostClub(c *gin.Context) {
+func (ch *ClubHandler) postClub(c *gin.Context) {
 	var club models.PostClubRequest
 	err := c.ShouldBindJSON(&club)
 	if err != nil {
@@ -126,4 +129,61 @@ func (ch *ClubHandler) PostClub(c *gin.Context) {
 	c.JSON(http.StatusCreated, models.GetClubResponse{
 		Club: models.NewClubDTO(dc),
 	})
+}
+
+// swagger:route PUT /club/{id} Clubs UpdateClub
+// Update existing club.
+//
+//	Consumes:
+//		- application/json
+//
+//	Produces:
+//		- application/json
+//
+//	Parameters:
+//		+ name: id
+//		in: path
+//		required: true
+//		type: string
+//
+//	responses:
+//		200: PutClubResponse
+//		404: ErrorResponse
+//		500: ErrorResponse
+func (ch *ClubHandler) putClub(c *gin.Context) {
+	id, exist := c.Params.Get("id")
+	if !exist {
+		log.Printf("club id was not provided")
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing id parameter")))
+		return
+	}
+
+	_, err := ch.Repo.GetClub(id)
+	if err == domain.ErrClubNotFound {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		return
+	}
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	var club models.PutClubRequest
+	err = c.ShouldBindJSON(&club)
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	dc, err := ch.Repo.UpdateClub(id, club.ToEntity())
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, models.NewPutClubResponse(dc))
 }
