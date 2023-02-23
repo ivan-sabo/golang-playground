@@ -53,7 +53,7 @@ func (ch *ClubHandler) GetClubs(c *gin.Context) {
 }
 
 // swagger:route GET /club/{id} Clubs getClub
-// Get a single club by ID
+// Get a single club by ID.
 //
 //	Consumes:
 //		- application/json
@@ -96,7 +96,7 @@ func (ch *ClubHandler) GetClub(c *gin.Context) {
 }
 
 // swagger:route POST /club Clubs CreateClub
-// Create a new Club
+// Create a new Club.
 //
 //	Consumes:
 //		- application/json

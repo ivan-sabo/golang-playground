@@ -48,7 +48,6 @@
         }
       },
       "post": {
-        "description": "Create a new Club",
         "consumes": [
           "application/json"
         ],
@@ -58,6 +57,7 @@
         "tags": [
           "Clubs"
         ],
+        "summary": "Create a new Club.",
         "operationId": "CreateClub",
         "parameters": [
           {
@@ -80,7 +80,6 @@
     },
     "/club/{id}": {
       "get": {
-        "description": "Get a single club by ID",
         "consumes": [
           "application/json"
         ],
@@ -90,6 +89,7 @@
         "tags": [
           "Clubs"
         ],
+        "summary": "Get a single club by ID.",
         "operationId": "getClub",
         "parameters": [
           {
@@ -238,7 +238,7 @@
   },
   "responses": {
     "ErrorResponse": {
-      "description": "This text will appear as description of your response body.",
+      "description": "Standard error reponse.",
       "schema": {
         "$ref": "#/definitions/ErrorResponse"
       }

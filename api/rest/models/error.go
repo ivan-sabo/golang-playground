@@ -1,6 +1,6 @@
 package models
 
-// This text will appear as description of your response body.
+// Standard error reponse.
 // swagger:response ErrorResponse
 type ErrorResponseWrapper struct {
 	// in: body

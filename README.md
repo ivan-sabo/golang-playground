@@ -18,4 +18,10 @@ a beta release :D
 Here will be a list of features
 
 ## TODO list
-Here will be todo list
+- finish REST CRUD for all domain entities
+- write unit tests
+- write API tests
+- add request validation
+- implement gRPC
+- implement authentication and authorization
+- wrap everything in Docker
