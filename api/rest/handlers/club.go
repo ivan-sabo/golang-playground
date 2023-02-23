@@ -26,10 +26,11 @@ func NewClubHandler(ginEngine *gin.Engine, dbConn *gorm.DB) ClubHandler {
 func (ch *ClubHandler) AddClubRoutes() {
 	c := ch.GinEngine.Group("/club")
 
+	c.GET("/:id", ch.GetClub)
 	c.GET("", ch.GetClubs)
 }
 
-// swagger:route GET /club Club getClub
+// swagger:route GET /club Clubs getClubs
 // Club holds all data relevant to a football club.
 //
 //	Produces:
@@ -46,5 +47,47 @@ func (ch *ClubHandler) GetClubs(c *gin.Context) {
 
 	c.JSON(http.StatusOK, models.GetClubsResponse{
 		Clubs: models.NewClubsDTO(clubs),
+	})
+}
+
+// swagger:route GET /club/{id} Clubs getClub
+// Club holds all data relevant to a football club.
+//
+//	Consumes:
+//		- application/json
+//
+//	Produces:
+//		- application/json
+//
+//	Parameters:
+//		+ name: id
+//		in: path
+//		required: true
+//		type: string
+//
+//	responses:
+//		200: GetClubResponse
+//		404: ErrorResponse
+//		500: ErrorResponse
+func (ch *ClubHandler) GetClub(c *gin.Context) {
+	id, exist := c.Params.Get("id")
+	if !exist {
+		log.Printf("club id was not provided")
+		return
+	}
+
+	club, err := ch.Repo.GetClub(id)
+	if err == domain.ErrClubNotFound {
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		return
+	}
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, models.GetClubResponse{
+		Club: models.NewClubDTO(club),
 	})
 }

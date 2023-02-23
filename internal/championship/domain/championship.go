@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type Championships []Championship
 
@@ -48,3 +51,5 @@ type ClubRepo interface {
 type ClubFilter struct {
 	Name string
 }
+
+var ErrClubNotFound = errors.New("club not found")

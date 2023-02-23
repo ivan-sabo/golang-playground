@@ -13,17 +13,29 @@ type GetClubsResponse struct {
 	Clubs ClubsDTO `json:"clubs"`
 }
 
+// This text will appear as description of your response body.
+// swagger:response GetClubResponse
+type GetClubResponseWrapper struct {
+	// in: body
+	Body GetClubResponse
+}
+
+type GetClubResponse struct {
+	Club ClubDTO `json:"club"`
+}
+
 type ClubsDTO []ClubDTO
 
 type ClubDTO struct {
-	// Name of club
-	//
+	ID string `json:"id"`
+
 	// required: true
 	Name string `json:"name"`
 }
 
 func NewClubDTO(c domain.Club) ClubDTO {
 	return ClubDTO{
+		ID:   c.ID,
 		Name: c.Name,
 	}
 }

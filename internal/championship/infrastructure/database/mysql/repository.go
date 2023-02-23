@@ -47,7 +47,11 @@ func (c ClubMySQLRepo) GetClubs(domain.ClubFilter) (domain.Clubs, error) {
 
 func (c ClubMySQLRepo) GetClub(id string) (domain.Club, error) {
 	var club Club
-	tx := c.conn.Find(&club, id)
+	tx := c.conn.Where("id = ?", id).First(&club)
+
+	if tx.Error == gorm.ErrRecordNotFound {
+		return domain.Club{}, domain.ErrClubNotFound
+	}
 	if tx.Error != nil {
 		return domain.Club{}, tx.Error
 	}
