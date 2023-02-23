@@ -26,7 +26,7 @@ func NewChampionshipHandler(ginEngine *gin.Engine, dbConn *gorm.DB) Championship
 func (gr *ChampionshipHandler) AddChampionshipRoutes() {
 	c := gr.GinEngine.Group("/championship")
 
-	c.GET("", gr.GetChampionship)
+	c.GET("", gr.GetChampionships)
 }
 
 // swagger:route GET /championship Championship getChampionship
@@ -37,7 +37,7 @@ func (gr *ChampionshipHandler) AddChampionshipRoutes() {
 //
 //	responses:
 //		200: GetChampionshipsResponse
-func (gr *ChampionshipHandler) GetChampionship(c *gin.Context) {
+func (gr *ChampionshipHandler) GetChampionships(c *gin.Context) {
 	championships, err := gr.Repo.GetChampionships()
 	if err != nil {
 		log.Printf("An error occured: %v", err)

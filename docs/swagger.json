@@ -30,6 +30,23 @@
           }
         }
       }
+    },
+    "/club": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Club"
+        ],
+        "summary": "Club holds all data relevant to a football club.",
+        "operationId": "getClub",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetClubsResponse"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -73,11 +90,41 @@
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
     },
+    "ClubDTO": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "Name of club",
+          "type": "string",
+          "x-go-name": "Name"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
+    "ClubsDTO": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ClubDTO"
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
     "GetChampionshipsResponse": {
       "type": "object",
       "properties": {
         "championships": {
           "$ref": "#/definitions/ChampionshipsDTO"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
+    "GetClubsResponse": {
+      "type": "object",
+      "properties": {
+        "clubs": {
+          "$ref": "#/definitions/ClubsDTO"
         }
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
@@ -88,6 +135,12 @@
       "description": "This text will appear as description of your response body.",
       "schema": {
         "$ref": "#/definitions/GetChampionshipsResponse"
+      }
+    },
+    "GetClubsResponse": {
+      "description": "This text will appear as description of your response body.",
+      "schema": {
+        "$ref": "#/definitions/GetClubsResponse"
       }
     }
   }

@@ -17,21 +17,6 @@ type GetChampionshipsResponse struct {
 	Championships ChampionshipsDTO `json:"championships"`
 }
 
-func NewClubDTO(c domain.Club) ClubDTO {
-	return ClubDTO{
-		Name: c.Name,
-	}
-}
-
-func NewClubsDTO(cs domain.Clubs) ClubsDTO {
-	clubs := make(ClubsDTO, 0, len(cs))
-	for _, c := range cs {
-		clubs = append(clubs, NewClubDTO(c))
-	}
-
-	return clubs
-}
-
 type ChampionshipsDTO []ChampionshipDTO
 
 type ChampionshipDTO struct {
@@ -65,13 +50,4 @@ func NewChampionshipsDTO(cs domain.Championships) ChampionshipsDTO {
 	}
 
 	return championships
-}
-
-type ClubsDTO []ClubDTO
-
-type ClubDTO struct {
-	// Name of club
-	//
-	// required: true
-	Name string `json:"name"`
 }

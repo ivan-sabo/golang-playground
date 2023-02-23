@@ -9,3 +9,15 @@ swagger-serve: check-swagger
 
 run:
 	go run cmd/api/main.go
+
+run-docker-mysql:
+	docker run --name golang-training-ground-mysql -e MYSQL_ROOT_PASSWORD=test -p 3306:3306 -d mysql:latest
+
+migrate-up:
+	migrate -path internal/championship/infrastructure/database/migrations/ -database "mysql://root:test@tcp(localhost:3306)/golang_playground" -verbose up
+
+migrate-down:
+	migrate -path internal/championship/infrastructure/database/migrations/ -database "mysql://root:test@tcp(localhost:3306)/golang_playground" -verbose down
+
+migrate-drop:
+	migrate -path internal/championship/infrastructure/database/migrations/ -database "mysql://root:test@tcp(localhost:3306)/golang_playground" -verbose drop

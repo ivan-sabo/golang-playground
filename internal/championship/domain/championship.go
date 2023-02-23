@@ -38,14 +38,13 @@ type ChampionshipRepo interface {
 }
 
 type ClubRepo interface {
-	GetClubs() (Clubs, error)
-	GetClub(ClubFilter) (Club, error)
-	CreateClub(Club) (Club, error)
-	UpdateClub(Club) (Club, error)
-	DeleteClub(int) error
+	GetClubs(ClubFilter) (Clubs, error)
+	GetClub(string) (Club, error)
+	//CreateClub(Club) (Club, error)
+	//UpdateClub(Club) (Club, error)
+	//DeleteClub(int) error
 }
 
 type ClubFilter struct {
 	Name string
-	ID   string
 }

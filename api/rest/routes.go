@@ -9,4 +9,7 @@ import (
 func attachRoutes(g *gin.Engine, dbConn *gorm.DB) {
 	championshipRouter := handlers.NewChampionshipHandler(g, dbConn)
 	championshipRouter.AddChampionshipRoutes()
+
+	clubRouter := handlers.NewClubHandler(g, dbConn)
+	clubRouter.AddClubRoutes()
 }
