@@ -50,3 +50,32 @@ func (c ChampionshipMySQLRepo) CreateChampionship(dc domain.Championship) (domai
 
 	return championship.ToEntity(), nil
 }
+
+func (c ChampionshipMySQLRepo) UpdateChampionship(id string, dc domain.Championship) (domain.Championship, error) {
+	var championship mysql.Championship
+	tx := c.conn.Where("id = ?", id).First(&championship)
+
+	if tx.Error == gorm.ErrRecordNotFound {
+		return domain.Championship{}, domain.ErrChampionshipNotFound
+	}
+	if tx.Error != nil {
+		return domain.Championship{}, tx.Error
+	}
+
+	championship.Name = dc.Name
+	tx = c.conn.Save(&championship)
+	if tx.Error != nil {
+		return domain.Championship{}, tx.Error
+	}
+
+	return championship.ToEntity(), nil
+}
+
+func (c ChampionshipMySQLRepo) DeleteChampionship(id string) error {
+	tx := c.conn.Delete(&mysql.Championship{}, "id = ?", id)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	return nil
+}

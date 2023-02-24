@@ -30,6 +30,8 @@ func (gr *ChampionshipHandler) AddChampionshipRoutes() {
 	c.GET("", gr.getChampionships)
 	c.GET("/:id", gr.getChampionship)
 	c.POST("", gr.postChampionship)
+	c.PUT("/:id", gr.putChampionship)
+	c.DELETE("/:id", gr.deleteChampionship)
 }
 
 // swagger:route GET /championship Championship getChampionships
@@ -118,4 +120,91 @@ func (ch *ChampionshipHandler) postChampionship(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, models.NewPostChampionshipResponse(dc))
+}
+
+// swagger:route PUT /championship/{id} Championship UpdateChampionship
+// Update existing championship.
+//
+//	Consumes:
+//		- application/json
+//
+//	Produces:
+//		- application/json
+//
+//	Parameters:
+//		+ name: id
+//		in: path
+//		required: true
+//		type: string
+//
+//	responses:
+//		200: PutChampionshipResponse
+//		404: ErrorResponse
+//		500: ErrorResponse
+func (ch *ChampionshipHandler) putChampionship(c *gin.Context) {
+	id, exist := c.Params.Get("id")
+	if !exist {
+		log.Printf("championship id was not provided")
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing id parameter")))
+		return
+	}
+
+	_, err := ch.Repo.GetChampionship(id)
+	if err == domain.ErrChampionshipNotFound {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		return
+	}
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	var championship models.PutChampionshipRequest
+	err = c.ShouldBindJSON(&championship)
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	dc, err := ch.Repo.UpdateChampionship(id, championship.ToEntity())
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, models.NewPutChampionshipResponse(dc))
+}
+
+// swagger:route DELETE /championship/{id} Championship DeleteChampionship
+// Delete a championship.
+//
+//	Parameters:
+//		+ name: id
+//		in: path
+//		required: true
+//		type: string
+//
+//	responses:
+//		200:
+//		500: ErrorResponse
+func (ch *ChampionshipHandler) deleteChampionship(c *gin.Context) {
+	id, exist := c.Params.Get("id")
+	if !exist {
+		log.Printf("championship id was not provided")
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing id parameter")))
+		return
+	}
+
+	err := ch.Repo.DeleteChampionship(id)
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	c.Status(http.StatusOK)
 }

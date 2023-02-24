@@ -108,3 +108,39 @@ func NewPostChampionshipResponse(c domain.Championship) PostChampionshipResponse
 		Championship: NewChampionshipDTO(c),
 	}
 }
+
+// Update Championship request
+// swagger:parameters UpdateChampionship
+type PutChampionshipRequestWrapper struct {
+	// in: body
+	Body PutChampionshipRequest
+}
+
+type PutChampionshipRequest struct {
+	Name string `json:"name"`
+}
+
+func (r PutChampionshipRequest) ToEntity() domain.Championship {
+	return domain.Championship{
+		Name: r.Name,
+	}
+}
+
+// Update Championship response
+// swagger:response PostChampionshipResponse
+type PutChampionshipResponseWrapper struct {
+	// in: body
+	Body PutChampionshipResponse
+}
+
+type PutChampionshipResponse struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+func NewPutChampionshipResponse(c domain.Championship) PutChampionshipResponse {
+	return PutChampionshipResponse{
+		ID:   c.ID,
+		Name: c.Name,
+	}
+}

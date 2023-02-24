@@ -112,7 +112,7 @@ func (r PutClubRequest) ToEntity() domain.Club {
 	}
 }
 
-// Create Club response
+// Update Club response
 // swagger:response PostClubResponse
 type PutClubResponseWrapper struct {
 	// in: body

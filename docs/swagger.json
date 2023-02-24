@@ -90,6 +90,71 @@
             "$ref": "#/responses/ErrorResponse"
           }
         }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Championship"
+        ],
+        "summary": "Update existing championship.",
+        "operationId": "UpdateChampionship",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/PutChampionshipRequest"
+            }
+          },
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "PutChampionshipResponse",
+            "schema": {
+              "$ref": "#/definitions/PutChampionshipResponse"
+            }
+          },
+          "404": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Championship"
+        ],
+        "summary": "Delete a championship.",
+        "operationId": "DeleteChampionship",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
       }
     },
     "/club": {
@@ -98,7 +163,7 @@
           "application/json"
         ],
         "tags": [
-          "Clubs"
+          "Club"
         ],
         "summary": "Get a list of clubs.",
         "operationId": "getClubs",
@@ -116,7 +181,7 @@
           "application/json"
         ],
         "tags": [
-          "Clubs"
+          "Club"
         ],
         "summary": "Create a new Club.",
         "operationId": "CreateClub",
@@ -148,7 +213,7 @@
           "application/json"
         ],
         "tags": [
-          "Clubs"
+          "Club"
         ],
         "summary": "Get a single club by ID.",
         "operationId": "getClub",
@@ -180,7 +245,7 @@
           "application/json"
         ],
         "tags": [
-          "Clubs"
+          "Club"
         ],
         "summary": "Update existing club.",
         "operationId": "UpdateClub",
@@ -216,7 +281,7 @@
       },
       "delete": {
         "tags": [
-          "Clubs"
+          "Club"
         ],
         "summary": "Delete a club.",
         "operationId": "DeleteClub",
@@ -388,6 +453,30 @@
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
     },
+    "PutChampionshipRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
+    "PutChampionshipResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
     "PutClubRequest": {
       "type": "object",
       "properties": {
@@ -445,13 +534,13 @@
       }
     },
     "PostChampionshipResponse": {
-      "description": "Create Championship response",
+      "description": "Update Championship response",
       "schema": {
-        "$ref": "#/definitions/PostChampionshipResponse"
+        "$ref": "#/definitions/PutChampionshipResponse"
       }
     },
     "PostClubResponse": {
-      "description": "Create Club response",
+      "description": "Update Club response",
       "schema": {
         "$ref": "#/definitions/PutClubResponse"
       }

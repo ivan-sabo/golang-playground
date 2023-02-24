@@ -40,6 +40,8 @@ type ChampionshipRepo interface {
 	GetChampionships() (Championships, error)
 	GetChampionship(string) (Championship, error)
 	CreateChampionship(Championship) (Championship, error)
+	UpdateChampionship(string, Championship) (Championship, error)
+	DeleteChampionship(string) error
 }
 
 type ClubRepo interface {

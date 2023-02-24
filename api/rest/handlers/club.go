@@ -34,7 +34,7 @@ func (ch *ClubHandler) AddClubRoutes() {
 	c.DELETE("/:id", ch.deleteClub)
 }
 
-// swagger:route GET /club Clubs getClubs
+// swagger:route GET /club Club getClubs
 // Get a list of clubs.
 //
 //	Produces:
@@ -53,7 +53,7 @@ func (ch *ClubHandler) getClubs(c *gin.Context) {
 	c.JSON(http.StatusOK, models.NewGetClubsResponse(clubs))
 }
 
-// swagger:route GET /club/{id} Clubs getClub
+// swagger:route GET /club/{id} Club getClub
 // Get a single club by ID.
 //
 //	Consumes:
@@ -97,7 +97,7 @@ func (ch *ClubHandler) getClub(c *gin.Context) {
 	})
 }
 
-// swagger:route POST /club Clubs CreateClub
+// swagger:route POST /club Club CreateClub
 // Create a new Club.
 //
 //	Consumes:
@@ -128,7 +128,7 @@ func (ch *ClubHandler) postClub(c *gin.Context) {
 	c.JSON(http.StatusCreated, models.NewPostClubResponse(dc))
 }
 
-// swagger:route PUT /club/{id} Clubs UpdateClub
+// swagger:route PUT /club/{id} Club UpdateClub
 // Update existing club.
 //
 //	Consumes:
@@ -185,7 +185,7 @@ func (ch *ClubHandler) putClub(c *gin.Context) {
 	c.JSON(http.StatusOK, models.NewPutClubResponse(dc))
 }
 
-// swagger:route DELETE /club/{id} Clubs DeleteClub
+// swagger:route DELETE /club/{id} Club DeleteClub
 // Delete a club.
 //
 //	Parameters:
