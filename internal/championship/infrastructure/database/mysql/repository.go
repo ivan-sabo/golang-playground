@@ -89,3 +89,12 @@ func (c ClubMySQLRepo) UpdateClub(id string, dc domain.Club) (domain.Club, error
 
 	return club.ToEntity(), nil
 }
+
+func (c ClubMySQLRepo) DeleteClub(id string) error {
+	tx := c.conn.Delete(&Club{}, "id = ?", id)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	return nil
+}

@@ -31,6 +31,7 @@ func (ch *ClubHandler) AddClubRoutes() {
 	c.PUT("/:id", ch.putClub)
 	c.GET("", ch.getClubs)
 	c.POST("", ch.postClub)
+	c.DELETE("/:id", ch.deleteClub)
 }
 
 // swagger:route GET /club Clubs getClubs
@@ -186,4 +187,34 @@ func (ch *ClubHandler) putClub(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, models.NewPutClubResponse(dc))
+}
+
+// swagger:route DELETE /club/{id} Clubs DeleteClub
+// Delete a club.
+//
+//	Parameters:
+//		+ name: id
+//		in: path
+//		required: true
+//		type: string
+//
+//	responses:
+//		200:
+//		500: ErrorResponse
+func (ch *ClubHandler) deleteClub(c *gin.Context) {
+	id, exist := c.Params.Get("id")
+	if !exist {
+		log.Printf("club id was not provided")
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing id parameter")))
+		return
+	}
+
+	err := ch.Repo.DeleteClub(id)
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	c.Status(http.StatusOK)
 }

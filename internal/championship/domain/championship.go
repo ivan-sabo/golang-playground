@@ -45,7 +45,7 @@ type ClubRepo interface {
 	GetClub(string) (Club, error)
 	CreateClub(Club) (Club, error)
 	UpdateClub(string, Club) (Club, error)
-	//DeleteClub(int) error
+	DeleteClub(string) error
 }
 
 type ClubFilter struct {

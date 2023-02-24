@@ -152,6 +152,29 @@
             "$ref": "#/responses/ErrorResponse"
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Clubs"
+        ],
+        "summary": "Delete a club.",
+        "operationId": "DeleteClub",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
       }
     }
   },
