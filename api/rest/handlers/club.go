@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/ivan-sabo/golang-playground/api/rest/models"
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
-	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql"
+	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql/repository"
 	"gorm.io/gorm"
 )
 
@@ -20,7 +20,7 @@ type ClubHandler struct {
 func NewClubHandler(ginEngine *gin.Engine, dbConn *gorm.DB) ClubHandler {
 	return ClubHandler{
 		GinEngine: ginEngine,
-		Repo:      mysql.NewClubMySQLRepo(dbConn),
+		Repo:      repository.NewClubMySQLRepo(dbConn),
 	}
 }
 

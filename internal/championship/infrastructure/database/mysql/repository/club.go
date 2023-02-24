@@ -1,29 +1,10 @@
-package mysql
+package repository
 
 import (
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
+	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql"
 	"gorm.io/gorm"
 )
-
-type ChampionshipMySQLRepo struct {
-	conn *gorm.DB
-}
-
-func NewChampionshipMySQLRepo(conn *gorm.DB) *ChampionshipMySQLRepo {
-	return &ChampionshipMySQLRepo{
-		conn: conn,
-	}
-}
-
-func (r ChampionshipMySQLRepo) GetChampionships() (domain.Championships, error) {
-	var championships Championships
-	tx := r.conn.Model(&Championship{}).Find(&championships)
-	if tx.Error != nil {
-		return domain.Championships{}, tx.Error
-	}
-
-	return championships.ToEntity(), nil
-}
 
 type ClubMySQLRepo struct {
 	conn *gorm.DB
@@ -36,8 +17,8 @@ func NewClubMySQLRepo(conn *gorm.DB) *ClubMySQLRepo {
 }
 
 func (c ClubMySQLRepo) GetClubs(domain.ClubFilter) (domain.Clubs, error) {
-	var clubs Clubs
-	tx := c.conn.Model(&Club{}).Find(&clubs)
+	var clubs mysql.Clubs
+	tx := c.conn.Model(&mysql.Club{}).Find(&clubs)
 	if tx.Error != nil {
 		return domain.Clubs{}, tx.Error
 	}
@@ -46,7 +27,7 @@ func (c ClubMySQLRepo) GetClubs(domain.ClubFilter) (domain.Clubs, error) {
 }
 
 func (c ClubMySQLRepo) GetClub(id string) (domain.Club, error) {
-	var club Club
+	var club mysql.Club
 	tx := c.conn.Where("id = ?", id).First(&club)
 
 	if tx.Error == gorm.ErrRecordNotFound {
@@ -60,7 +41,7 @@ func (c ClubMySQLRepo) GetClub(id string) (domain.Club, error) {
 }
 
 func (c ClubMySQLRepo) CreateClub(dc domain.Club) (domain.Club, error) {
-	club := NewClub(dc)
+	club := mysql.NewClub(dc)
 	tx := c.conn.Create(&club)
 
 	if tx.Error != nil {
@@ -71,7 +52,7 @@ func (c ClubMySQLRepo) CreateClub(dc domain.Club) (domain.Club, error) {
 }
 
 func (c ClubMySQLRepo) UpdateClub(id string, dc domain.Club) (domain.Club, error) {
-	var club Club
+	var club mysql.Club
 	tx := c.conn.Where("id = ?", id).First(&club)
 
 	if tx.Error == gorm.ErrRecordNotFound {
@@ -91,7 +72,7 @@ func (c ClubMySQLRepo) UpdateClub(id string, dc domain.Club) (domain.Club, error
 }
 
 func (c ClubMySQLRepo) DeleteClub(id string) error {
-	tx := c.conn.Delete(&Club{}, "id = ?", id)
+	tx := c.conn.Delete(&mysql.Club{}, "id = ?", id)
 	if tx.Error != nil {
 		return tx.Error
 	}
