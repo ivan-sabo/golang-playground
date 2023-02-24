@@ -22,11 +22,72 @@
         "tags": [
           "Championship"
         ],
-        "summary": "Championship holds all data relevant to a soccer league.",
-        "operationId": "getChampionship",
+        "summary": "Get a list of Championships.",
+        "operationId": "getChampionships",
         "responses": {
           "200": {
             "$ref": "#/responses/GetChampionshipsResponse"
+          }
+        }
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Championship"
+        ],
+        "summary": "Create a new Championship.",
+        "operationId": "CreateChampionship",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/PostChampionshipRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/PostChampionshipResponse"
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/championship/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Championship"
+        ],
+        "summary": "Get a single Championship by ID.",
+        "operationId": "getChampionship",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetChampionshipResponse"
+          },
+          "404": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
           }
         }
       }
@@ -253,6 +314,15 @@
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
     },
+    "GetChampionshipResponse": {
+      "type": "object",
+      "properties": {
+        "championship": {
+          "$ref": "#/definitions/ChampionshipDTO"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
     "GetChampionshipsResponse": {
       "type": "object",
       "properties": {
@@ -280,6 +350,25 @@
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
     },
+    "PostChampionshipRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
+    "PostChampionshipResponse": {
+      "type": "object",
+      "properties": {
+        "Championship": {
+          "$ref": "#/definitions/ChampionshipDTO"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
     "PostClubRequest": {
       "type": "object",
       "properties": {
@@ -293,9 +382,8 @@
     "PostClubResponse": {
       "type": "object",
       "properties": {
-        "name": {
-          "type": "string",
-          "x-go-name": "Name"
+        "Club": {
+          "$ref": "#/definitions/ClubDTO"
         }
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
@@ -332,8 +420,14 @@
         "$ref": "#/definitions/ErrorResponse"
       }
     },
+    "GetChampionshipResponse": {
+      "description": "Single championship response",
+      "schema": {
+        "$ref": "#/definitions/GetChampionshipResponse"
+      }
+    },
     "GetChampionshipsResponse": {
-      "description": "List of championships",
+      "description": "List of championships reponse",
       "schema": {
         "$ref": "#/definitions/GetChampionshipsResponse"
       }
@@ -348,6 +442,12 @@
       "description": "List of Clubs response.",
       "schema": {
         "$ref": "#/definitions/GetClubsResponse"
+      }
+    },
+    "PostChampionshipResponse": {
+      "description": "Create Championship response",
+      "schema": {
+        "$ref": "#/definitions/PostChampionshipResponse"
       }
     },
     "PostClubResponse": {

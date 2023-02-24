@@ -13,6 +13,12 @@ type GetClubsResponse struct {
 	Clubs ClubsDTO `json:"clubs"`
 }
 
+func NewGetClubsResponse(c domain.Clubs) GetClubsResponse {
+	return GetClubsResponse{
+		Clubs: NewClubsDTO(c),
+	}
+}
+
 // Single Club response
 // swagger:response GetClubResponse
 type GetClubResponseWrapper struct {
@@ -22,6 +28,12 @@ type GetClubResponseWrapper struct {
 
 type GetClubResponse struct {
 	Club ClubDTO `json:"club"`
+}
+
+func NewGetClubResponse(c domain.Club) GetClubResponse {
+	return GetClubResponse{
+		Club: NewClubDTO(c),
+	}
 }
 
 type ClubsDTO []ClubDTO
@@ -74,7 +86,13 @@ type PostClubResponseWrapper struct {
 }
 
 type PostClubResponse struct {
-	Name string `json:"name"`
+	Club ClubDTO
+}
+
+func NewPostClubResponse(c domain.Club) PostClubResponse {
+	return PostClubResponse{
+		Club: NewClubDTO(c),
+	}
 }
 
 // Update Club request

@@ -38,6 +38,8 @@ type Club struct {
 
 type ChampionshipRepo interface {
 	GetChampionships() (Championships, error)
+	GetChampionship(string) (Championship, error)
+	CreateChampionship(Championship) (Championship, error)
 }
 
 type ClubRepo interface {
@@ -52,4 +54,7 @@ type ClubFilter struct {
 	Name string
 }
 
-var ErrClubNotFound = errors.New("club not found")
+var (
+	ErrClubNotFound         = errors.New("club not found")
+	ErrChampionshipNotFound = errors.New("championship not found")
+)

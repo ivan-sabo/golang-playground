@@ -51,6 +51,13 @@ type Championship struct {
 	DeletedAt gorm.DeletedAt
 }
 
+func NewChampionship(c domain.Championship) Championship {
+	return Championship{
+		ID:   uuid.NewString(),
+		Name: c.Name,
+	}
+}
+
 func (c *Championship) ToEntity() domain.Championship {
 	return domain.Championship{
 		ID:        c.ID,

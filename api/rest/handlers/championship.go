@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"log"
 	"net/http"
 
@@ -26,26 +27,95 @@ func NewChampionshipHandler(ginEngine *gin.Engine, dbConn *gorm.DB) Championship
 func (gr *ChampionshipHandler) AddChampionshipRoutes() {
 	c := gr.GinEngine.Group("/championship")
 
-	c.GET("", gr.GetChampionships)
+	c.GET("", gr.getChampionships)
+	c.GET("/:id", gr.getChampionship)
+	c.POST("", gr.postChampionship)
 }
 
-// swagger:route GET /championship Championship getChampionship
-// Championship holds all data relevant to a soccer league.
+// swagger:route GET /championship Championship getChampionships
+// Get a list of Championships.
 //
 //	Produces:
 //		- application/json
 //
 //	responses:
 //		200: GetChampionshipsResponse
-func (gr *ChampionshipHandler) GetChampionships(c *gin.Context) {
+func (gr *ChampionshipHandler) getChampionships(c *gin.Context) {
 	championships, err := gr.Repo.GetChampionships()
 	if err != nil {
 		log.Printf("An error occured: %v", err)
 		return
 	}
 
-	ch := models.GetChampionshipsResponse{
-		Championships: models.NewChampionshipsDTO(championships),
+	c.JSON(http.StatusOK, models.NewGetChampionshipsResponse(championships))
+}
+
+// swagger:route GET /championship/{id} Championship getChampionship
+// Get a single Championship by ID.
+//
+//	Produces:
+//		- application/json
+//
+//	Parameters:
+//		+ name: id
+//		in: path
+//		required: true
+//		type: string
+//
+//	responses:
+//		200: GetChampionshipResponse
+//		404: ErrorResponse
+//		500: ErrorResponse
+func (ch *ChampionshipHandler) getChampionship(c *gin.Context) {
+	id, exist := c.Params.Get("id")
+	if !exist {
+		log.Printf("championship id was not provided")
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing id parameter")))
+		return
 	}
-	c.JSON(http.StatusOK, ch)
+
+	championship, err := ch.Repo.GetChampionship(id)
+	if err == domain.ErrChampionshipNotFound {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		return
+	}
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, models.NewGetChampionshipResponse(championship))
+}
+
+// swagger:route POST /championship Championship CreateChampionship
+// Create a new Championship.
+//
+//	Consumes:
+//		- application/json
+//
+//	Produces:
+//		- application/json
+//
+//	responses:
+//		200: PostChampionshipResponse
+//		500: ErrorResponse
+func (ch *ChampionshipHandler) postChampionship(c *gin.Context) {
+	var championship models.PostChampionshipRequest
+	err := c.ShouldBindJSON(&championship)
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	dc, err := ch.Repo.CreateChampionship(championship.ToEntity())
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusCreated, models.NewPostChampionshipResponse(dc))
 }

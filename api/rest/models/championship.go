@@ -6,7 +6,7 @@ import (
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 )
 
-// List of championships
+// List of championships reponse
 // swagger:response GetChampionshipsResponse
 type GetChampionshipsResponseWrapper struct {
 	// in: body
@@ -15,6 +15,12 @@ type GetChampionshipsResponseWrapper struct {
 
 type GetChampionshipsResponse struct {
 	Championships ChampionshipsDTO `json:"championships"`
+}
+
+func NewGetChampionshipsResponse(cs domain.Championships) GetChampionshipsResponse {
+	return GetChampionshipsResponse{
+		Championships: NewChampionshipsDTO(cs),
+	}
 }
 
 type ChampionshipsDTO []ChampionshipDTO
@@ -50,4 +56,55 @@ func NewChampionshipsDTO(cs domain.Championships) ChampionshipsDTO {
 	}
 
 	return championships
+}
+
+// Single championship response
+// swagger:response GetChampionshipResponse
+type GetChampionshipResponseWrapper struct {
+	// in: body
+	Body GetChampionshipResponse
+}
+
+type GetChampionshipResponse struct {
+	Championship ChampionshipDTO `json:"championship"`
+}
+
+func NewGetChampionshipResponse(c domain.Championship) GetChampionshipResponse {
+	return GetChampionshipResponse{
+		Championship: NewChampionshipDTO(c),
+	}
+}
+
+// Single Championship request
+// swagger:parameters CreateChampionship
+type PostChampionshipRequestWrapper struct {
+	// in: body
+	Body PostChampionshipRequest
+}
+
+type PostChampionshipRequest struct {
+	Name string `json:"name"`
+}
+
+func (r PostChampionshipRequest) ToEntity() domain.Championship {
+	return domain.Championship{
+		Name: r.Name,
+	}
+}
+
+// Create Championship response
+// swagger:response PostChampionshipResponse
+type PostChampionshipResponseWrapper struct {
+	// in: body
+	Body PostChampionshipResponse
+}
+
+type PostChampionshipResponse struct {
+	Championship ChampionshipDTO
+}
+
+func NewPostChampionshipResponse(c domain.Championship) PostChampionshipResponse {
+	return PostChampionshipResponse{
+		Championship: NewChampionshipDTO(c),
+	}
 }

@@ -50,9 +50,7 @@ func (ch *ClubHandler) getClubs(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, models.GetClubsResponse{
-		Clubs: models.NewClubsDTO(clubs),
-	})
+	c.JSON(http.StatusOK, models.NewGetClubsResponse(clubs))
 }
 
 // swagger:route GET /club/{id} Clubs getClub
@@ -127,9 +125,7 @@ func (ch *ClubHandler) postClub(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, models.GetClubResponse{
-		Club: models.NewClubDTO(dc),
-	})
+	c.JSON(http.StatusCreated, models.NewPostClubResponse(dc))
 }
 
 // swagger:route PUT /club/{id} Clubs UpdateClub
