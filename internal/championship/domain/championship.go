@@ -51,7 +51,9 @@ func (cs *ChampionshipSeason) RemoveClub(c Club) {
 		}
 	}
 
-	cs.rounds.removeClub(c)
+	for i := range cs.rounds {
+		cs.rounds[i].removeClub(c)
+	}
 }
 
 func (cs *ChampionshipSeason) AddRound(r Round) {
@@ -128,7 +130,7 @@ func (g *Game) Schedule(start time.Time) {
 	g.Status = Scheduled
 }
 
-func NewGame(home Club, away Club, start time.Time) Game {
+func NewGame(home Club, away Club) Game {
 	return Game{
 		ID:     uuid.NewString(),
 		Home:   home,
@@ -139,17 +141,9 @@ func NewGame(home Club, away Club, start time.Time) Game {
 
 type Rounds []Round
 
-func (rs Rounds) removeClub(c Club) {
-	for _, r := range rs {
-		r.removeClub(c)
-	}
-}
-
 type Round struct {
-	NO           int
-	Games        Games
-	Season       Season
-	Championship Championship
+	NO    int
+	Games Games
 }
 
 func (r *Round) AddGame(g Game) {
@@ -167,12 +161,14 @@ func (r *Round) RemoveGame(g Game) {
 }
 
 func (r *Round) removeClub(c Club) {
-	for n, g := range r.Games {
+	games := Games{}
+	for _, g := range r.Games {
 		if g.Home.ID == c.ID || g.Away.ID == c.ID {
-			r.Games[n] = r.Games[len(r.Games)-1]
-			r.Games = r.Games[:len(r.Games)-1]
+			continue
 		}
+		games = append(games, g)
 	}
+	r.Games = games
 }
 
 type Status string
