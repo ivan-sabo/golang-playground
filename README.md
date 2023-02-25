@@ -18,7 +18,7 @@ a beta release :D
 Here will be a list of features
 
 ## TODO list
-- finish REST CRUD for all domain entities
+- finish REST for all functionalities
 - write unit tests
 - write API tests
 - add request validation

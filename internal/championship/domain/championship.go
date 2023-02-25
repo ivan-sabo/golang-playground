@@ -87,58 +87,6 @@ func NewSeason(s int, e int) Season {
 	}
 }
 
-type Clubs []Club
-
-type Club struct {
-	ID        string
-	Name      string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
-}
-
-func NewClub(n string) Club {
-	return Club{
-		ID:   uuid.NewString(),
-		Name: n,
-	}
-}
-
-type Games []Game
-
-type Game struct {
-	ID        string
-	Status    Status
-	Home      Club
-	Away      Club
-	HomeScore int
-	AwayScore int
-	Start     time.Time
-}
-
-func (g *Game) Finish() {
-	g.Status = Finished
-}
-
-func (g *Game) UpdateScore(home int, away int) {
-	g.HomeScore = home
-	g.AwayScore = away
-}
-
-func (g *Game) Schedule(start time.Time) {
-	g.Start = start
-	g.Status = Scheduled
-}
-
-func NewGame(home Club, away Club) Game {
-	return Game{
-		ID:     uuid.NewString(),
-		Home:   home,
-		Away:   away,
-		Status: Created,
-	}
-}
-
 type Rounds []Round
 
 type Round struct {
@@ -186,18 +134,6 @@ type ChampionshipRepo interface {
 	CreateChampionship(Championship) (Championship, error)
 	UpdateChampionship(string, Championship) (Championship, error)
 	DeleteChampionship(string) error
-}
-
-type ClubRepo interface {
-	GetClubs(ClubFilter) (Clubs, error)
-	GetClub(string) (Club, error)
-	CreateClub(Club) (Club, error)
-	UpdateClub(string, Club) (Club, error)
-	DeleteClub(string) error
-}
-
-type ClubFilter struct {
-	Name string
 }
 
 var (
