@@ -7,6 +7,15 @@ import (
 	"github.com/google/uuid"
 )
 
+var (
+	Created    Status = "created"
+	Scheduled  Status = "scheduled"
+	InProgress Status = "in progress"
+	Finished   Status = "finished"
+)
+
+type Status string
+
 type Championships []Championship
 
 type Championship struct {
@@ -70,6 +79,8 @@ func (cs *ChampionshipSeason) RemoveRound(r Round) {
 	}
 }
 
+type Seasons []Season
+
 type Season struct {
 	ID        string
 	StartYear int
@@ -119,14 +130,10 @@ func (r *Round) removeClub(c Club) {
 	r.Games = games
 }
 
-type Status string
-
-var (
-	Created    Status = "created"
-	Scheduled  Status = "scheduled"
-	InProgress Status = "in progress"
-	Finished   Status = "finished"
-)
+type SeasonFilter struct {
+	StartYear int
+	EndYear   int
+}
 
 type ChampionshipRepo interface {
 	GetChampionships() (Championships, error)
@@ -134,6 +141,14 @@ type ChampionshipRepo interface {
 	CreateChampionship(Championship) (Championship, error)
 	UpdateChampionship(string, Championship) (Championship, error)
 	DeleteChampionship(string) error
+}
+
+type SeasonRepo interface {
+	GetSeasons(SeasonFilter) (Seasons, error)
+	//GetSeason(string) (Season, error)
+	//CreateSeason(Season) (Season, error)
+	//UpdateSeason(string, Season) (Season, error)
+	//DeleteSeason(string) error
 }
 
 var (

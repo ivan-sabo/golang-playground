@@ -76,3 +76,34 @@ func (cs Championships) ToEntity() domain.Championships {
 
 	return championships
 }
+
+type Seasons []Season
+
+type Season struct {
+	ID        string `gorm:"primaryKey"`
+	StartYear int
+	EndYear   int
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt
+}
+
+func (ss Seasons) ToEntity() domain.Seasons {
+	seasons := make(domain.Seasons, 0, len(ss))
+	for _, s := range ss {
+		seasons = append(seasons, s.ToEntity())
+	}
+
+	return seasons
+}
+
+func (s Season) ToEntity() domain.Season {
+	return domain.Season{
+		ID:        s.ID,
+		StartYear: s.StartYear,
+		EndYear:   s.EndYear,
+		CreatedAt: s.CreatedAt,
+		UpdatedAt: s.UpdatedAt,
+		DeletedAt: s.DeletedAt.Time,
+	}
+}

@@ -12,4 +12,7 @@ func attachRoutes(g *gin.Engine, dbConn *gorm.DB) {
 
 	clubRouter := handlers.NewClubHandler(g, dbConn)
 	clubRouter.AddClubRoutes()
+
+	seasonRouter := handlers.NewSeasonHandler(g, dbConn)
+	seasonRouter.AddSeasonRoutes()
 }
