@@ -23,7 +23,12 @@ func (r ChampionshipMySQLRepo) GetChampionships() (domain.Championships, error) 
 		return domain.Championships{}, tx.Error
 	}
 
-	return championships.ToEntity(), nil
+	dcs, err := championships.ToEntity()
+	if err != nil {
+		return domain.Championships{}, err
+	}
+
+	return dcs, nil
 }
 
 func (r ChampionshipMySQLRepo) GetChampionship(id string) (domain.Championship, error) {
@@ -37,7 +42,12 @@ func (r ChampionshipMySQLRepo) GetChampionship(id string) (domain.Championship, 
 		return domain.Championship{}, tx.Error
 	}
 
-	return championship.ToEntity(), nil
+	dc, err := championship.ToEntity()
+	if err != nil {
+		return domain.Championship{}, err
+	}
+
+	return dc, nil
 }
 
 func (c ChampionshipMySQLRepo) CreateChampionship(dc domain.Championship) (domain.Championship, error) {
@@ -48,7 +58,12 @@ func (c ChampionshipMySQLRepo) CreateChampionship(dc domain.Championship) (domai
 		return domain.Championship{}, tx.Error
 	}
 
-	return championship.ToEntity(), nil
+	dc, err := championship.ToEntity()
+	if err != nil {
+		return domain.Championship{}, err
+	}
+
+	return dc, nil
 }
 
 func (c ChampionshipMySQLRepo) UpdateChampionship(id string, dc domain.Championship) (domain.Championship, error) {
@@ -68,7 +83,12 @@ func (c ChampionshipMySQLRepo) UpdateChampionship(id string, dc domain.Champions
 		return domain.Championship{}, tx.Error
 	}
 
-	return championship.ToEntity(), nil
+	dc, err := championship.ToEntity()
+	if err != nil {
+		return domain.Championship{}, err
+	}
+
+	return dc, nil
 }
 
 func (c ChampionshipMySQLRepo) DeleteChampionship(id string) error {

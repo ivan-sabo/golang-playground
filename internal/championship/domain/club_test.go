@@ -1,15 +1,40 @@
 package domain
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/google/uuid"
+	"github.com/ivan-sabo/golang-playground/internal"
+)
 
 func TestNewClub(t *testing.T) {
-	n := "borussia"
-	c := NewClub(n)
+	testNewClubSuccess(t)
+	testNewClubInvalidID(t)
+}
 
+func testNewClubSuccess(t *testing.T) {
+	n := "borussia"
+	c, err := NewClub("", n)
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 	if c.Name != n {
 		t.Fatalf("expected %v, got %v", n, c.Name)
 	}
-	if len(c.ID) != 36 {
-		t.Fatalf("UUID should be 36 char long, current value: %v", c.ID)
+
+	_, err = uuid.Parse(c.ID.String())
+	if err != nil {
+		t.Fatalf("invalid uuid: %v", err)
+	}
+}
+
+func testNewClubInvalidID(t *testing.T) {
+	n := "borussia"
+	invalidID := "test"
+	c, err := NewClub(invalidID, n)
+
+	if err != internal.ErrInvalidUUID {
+		t.Fatalf("UUID should be invalid and an error should be returned, got : %v", c.ID)
 	}
 }

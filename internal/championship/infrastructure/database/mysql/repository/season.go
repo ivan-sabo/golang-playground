@@ -23,5 +23,26 @@ func (c SeasonMySQLRepo) GetSeasons(domain.SeasonFilter) (domain.Seasons, error)
 		return domain.Seasons{}, tx.Error
 	}
 
-	return seasons.ToEntity(), nil
+	dss, err := seasons.ToEntity()
+	if err != nil {
+		return domain.Seasons{}, err
+	}
+
+	return dss, nil
+}
+
+func (c SeasonMySQLRepo) CreateSeason(ds domain.Season) (domain.Season, error) {
+	season := mysql.NewSeason(ds)
+	tx := c.conn.Create(&season)
+
+	if tx.Error != nil {
+		return domain.Season{}, tx.Error
+	}
+
+	ds, err := season.ToEntity()
+	if err != nil {
+		return domain.Season{}, err
+	}
+
+	return ds, nil
 }

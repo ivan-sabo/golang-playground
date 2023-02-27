@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/ivan-sabo/golang-playground/internal"
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 	"gorm.io/gorm"
 )
@@ -25,20 +26,31 @@ func NewClub(c domain.Club) Club {
 	}
 }
 
-func (c *Club) ToEntity() domain.Club {
-	return domain.Club{
-		ID:   c.ID,
-		Name: c.Name,
+func (c *Club) ToEntity() (domain.Club, error) {
+	id, err := uuid.Parse(c.ID)
+	if err != nil {
+		return domain.Club{}, internal.ErrInvalidUUID
 	}
+
+	return domain.Club{
+		ID:   id,
+		Name: c.Name,
+	}, nil
 }
 
-func (cs Clubs) ToEntity() domain.Clubs {
+func (cs Clubs) ToEntity() (domain.Clubs, error) {
 	clubs := make(domain.Clubs, 0, len(cs))
+
 	for _, c := range cs {
-		clubs = append(clubs, c.ToEntity())
+		dc, err := c.ToEntity()
+		if err != nil {
+			return domain.Clubs{}, err
+		}
+
+		clubs = append(clubs, dc)
 	}
 
-	return clubs
+	return clubs, nil
 }
 
 type Championships []Championship
@@ -53,28 +65,38 @@ type Championship struct {
 
 func NewChampionship(c domain.Championship) Championship {
 	return Championship{
-		ID:   uuid.NewString(),
+		ID:   c.ID.String(),
 		Name: c.Name,
 	}
 }
 
-func (c *Championship) ToEntity() domain.Championship {
+func (c *Championship) ToEntity() (domain.Championship, error) {
+	id, err := uuid.Parse(c.ID)
+	if err != nil {
+		return domain.Championship{}, internal.ErrInvalidUUID
+	}
+
 	return domain.Championship{
-		ID:        c.ID,
+		ID:        id,
 		Name:      c.Name,
 		CreatedAt: c.CreatedAt,
 		UpdatedAt: c.UpdatedAt,
 		DeletedAt: c.DeletedAt.Time,
-	}
+	}, nil
 }
 
-func (cs Championships) ToEntity() domain.Championships {
+func (cs Championships) ToEntity() (domain.Championships, error) {
 	championships := make(domain.Championships, 0, len(cs))
 	for _, c := range cs {
-		championships = append(championships, c.ToEntity())
+		dc, err := c.ToEntity()
+		if err != nil {
+			return domain.Championships{}, err
+		}
+
+		championships = append(championships, dc)
 	}
 
-	return championships
+	return championships, nil
 }
 
 type Seasons []Season
@@ -88,22 +110,39 @@ type Season struct {
 	DeletedAt gorm.DeletedAt
 }
 
-func (ss Seasons) ToEntity() domain.Seasons {
-	seasons := make(domain.Seasons, 0, len(ss))
-	for _, s := range ss {
-		seasons = append(seasons, s.ToEntity())
+func NewSeason(ds domain.Season) Season {
+	return Season{
+		ID:        ds.ID.String(),
+		StartYear: ds.StartYear,
+		EndYear:   ds.EndYear,
 	}
-
-	return seasons
 }
 
-func (s Season) ToEntity() domain.Season {
+func (ss Seasons) ToEntity() (domain.Seasons, error) {
+	seasons := make(domain.Seasons, 0, len(ss))
+	for _, s := range ss {
+		ds, err := s.ToEntity()
+		if err != nil {
+			return domain.Seasons{}, err
+		}
+		seasons = append(seasons, ds)
+	}
+
+	return seasons, nil
+}
+
+func (s Season) ToEntity() (domain.Season, error) {
+	id, err := uuid.Parse(s.ID)
+	if err != nil {
+		return domain.Season{}, internal.ErrInvalidUUID
+	}
+
 	return domain.Season{
-		ID:        s.ID,
+		ID:        id,
 		StartYear: s.StartYear,
 		EndYear:   s.EndYear,
 		CreatedAt: s.CreatedAt,
 		UpdatedAt: s.UpdatedAt,
 		DeletedAt: s.DeletedAt.Time,
-	}
+	}, nil
 }

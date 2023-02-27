@@ -56,12 +56,12 @@ type ClubDTO struct {
 
 func NewClubDTO(c domain.Club) ClubDTO {
 	return ClubDTO{
-		ID:   c.ID,
+		ID:   c.ID.String(),
 		Name: c.Name,
 	}
 }
 
-// Single Club request
+// Create Club request
 // swagger:parameters CreateClub
 type PostClubRequestWrapper struct {
 	// in: body
@@ -126,7 +126,7 @@ type PutClubResponse struct {
 
 func NewPutClubResponse(c domain.Club) PutClubResponse {
 	return PutClubResponse{
-		ID:   c.ID,
+		ID:   c.ID.String(),
 		Name: c.Name,
 	}
 }

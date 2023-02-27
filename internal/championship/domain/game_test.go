@@ -9,10 +9,10 @@ import (
 
 func TestNewGame(t *testing.T) {
 	hc := Club{
-		ID: uuid.NewString(),
+		ID: uuid.New(),
 	}
 	ac := Club{
-		ID: uuid.NewString(),
+		ID: uuid.New(),
 	}
 	g := NewGame(hc, ac)
 
@@ -35,10 +35,10 @@ func TestGame(t *testing.T) {
 	} {
 		g := Game{
 			Home: Club{
-				ID: uuid.NewString(),
+				ID: uuid.New(),
 			},
 			Away: Club{
-				ID: uuid.NewString(),
+				ID: uuid.New(),
 			},
 			Status: Created,
 		}

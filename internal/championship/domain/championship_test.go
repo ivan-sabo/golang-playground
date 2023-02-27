@@ -4,42 +4,83 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/ivan-sabo/golang-playground/internal"
 )
 
 func TestNewChampionship(t *testing.T) {
-	name := "uefa"
-	c := NewChampionship(name)
+	testNewChampionshipSuccess(t)
+	testNewChampionshipInvalidUUID(t)
+}
 
+func testNewChampionshipSuccess(t *testing.T) {
+	name := "uefa"
+	c, err := NewChampionship("", name)
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 	if c.Name != name {
 		t.Fatalf("expected %v, got %v", name, c.Name)
 	}
-	if len(c.ID) != 36 {
-		t.Fatalf("UUID should be 36 char long, current value: %v", c.ID)
+
+	_, err = uuid.Parse(c.ID.String())
+	if err != nil {
+		t.Fatalf("invalid uuid: %v", err)
+	}
+}
+
+func testNewChampionshipInvalidUUID(t *testing.T) {
+	name := "uefa"
+	invalidUUID := "test"
+	c, err := NewChampionship(invalidUUID, name)
+
+	if err != internal.ErrInvalidUUID {
+		t.Fatalf("UUID should be invalid and an error should be returned, got : %v", c.ID)
 	}
 }
 
 func TestNewSeason(t *testing.T) {
+	testNewSeasonSuccess(t)
+	testNewSeasonInvalidUUID(t)
+}
+
+func testNewSeasonSuccess(t *testing.T) {
 	startYear := 2023
 	endYear := 2024
-	s := NewSeason(startYear, endYear)
+	s, err := NewSeason("", startYear, endYear)
 
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 	if s.StartYear != startYear {
 		t.Fatalf("expected %v, got %v", startYear, s.StartYear)
 	}
 	if s.EndYear != endYear {
 		t.Fatalf("expected %v, got %v", endYear, s.EndYear)
 	}
-	if len(s.ID) != 36 {
-		t.Fatalf("UUID should be 36 char long, current value: %v", s.ID)
+	_, err = uuid.Parse(s.ID.String())
+	if err != nil {
+		t.Fatalf("invalid uuid: %v", err)
+	}
+}
+
+func testNewSeasonInvalidUUID(t *testing.T) {
+	invalidUUID := "test"
+	startYear := 2023
+	endYear := 2024
+	s, err := NewSeason(invalidUUID, startYear, endYear)
+
+	if err != internal.ErrInvalidUUID {
+		t.Fatalf("UUID should be invalid and an error should be returned, got : %v", s.ID)
 	}
 }
 
 func TestRegisterSeason(t *testing.T) {
-	cID := uuid.NewString()
+	cID := uuid.New()
 	c := Championship{
 		ID: cID,
 	}
-	sID := uuid.NewString()
+	sID := uuid.New()
 	s := Season{
 		ID: sID,
 	}
@@ -60,11 +101,11 @@ func TestChampionshipSeason(t *testing.T) {
 		"test add round":    testChampionshipSeasonAddRound,
 		"test remove round": testChampionshipSeasonRemoveRound,
 	} {
-		cID := uuid.NewString()
+		cID := uuid.New()
 		c := Championship{
 			ID: cID,
 		}
-		sID := uuid.NewString()
+		sID := uuid.New()
 		s := Season{
 			ID: sID,
 		}
@@ -78,7 +119,7 @@ func TestChampionshipSeason(t *testing.T) {
 func testChampionshipSeasonAddClub(t *testing.T, cs ChampionshipSeason) {
 	t.Helper()
 
-	cID := uuid.NewString()
+	cID := uuid.New()
 	c := Club{
 		ID: cID,
 	}
@@ -95,7 +136,7 @@ func testChampionshipSeasonAddClub(t *testing.T, cs ChampionshipSeason) {
 func testChampionshipSeasonRemoveClub(t *testing.T, cs ChampionshipSeason) {
 	t.Helper()
 
-	cID := uuid.NewString()
+	cID := uuid.New()
 	c := Club{
 		ID: cID,
 	}
@@ -207,10 +248,10 @@ func testRoundRemoveClub(t *testing.T, r Round) {
 	t.Helper()
 
 	c := Club{
-		ID: uuid.NewString(),
+		ID: uuid.New(),
 	}
 	c2 := Club{
-		ID: uuid.NewString(),
+		ID: uuid.New(),
 	}
 
 	r.Games = Games{

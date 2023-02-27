@@ -41,7 +41,7 @@ type ChampionshipDTO struct {
 
 func NewChampionshipDTO(c domain.Championship) ChampionshipDTO {
 	return ChampionshipDTO{
-		ID:        c.ID,
+		ID:        c.ID.String(),
 		Name:      c.Name,
 		CreatedAt: c.CreatedAt,
 		UpdateAt:  c.UpdatedAt,
@@ -140,7 +140,7 @@ type PutChampionshipResponse struct {
 
 func NewPutChampionshipResponse(c domain.Championship) PutChampionshipResponse {
 	return PutChampionshipResponse{
-		ID:   c.ID,
+		ID:   c.ID.String(),
 		Name: c.Name,
 	}
 }

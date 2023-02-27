@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/ivan-sabo/golang-playground/internal"
 )
 
 var (
@@ -19,7 +20,7 @@ type Status string
 type Championships []Championship
 
 type Championship struct {
-	ID        string
+	ID        uuid.UUID
 	Name      string
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -33,11 +34,20 @@ func (c Championship) RegisterSeason(s Season) ChampionshipSeason {
 	}
 }
 
-func NewChampionship(name string) Championship {
-	return Championship{
-		ID:   uuid.NewString(),
-		Name: name,
+func NewChampionship(id string, name string) (Championship, error) {
+	if id == "" {
+		id = uuid.NewString()
 	}
+
+	cuuid, err := uuid.Parse(id)
+	if err != nil {
+		return Championship{}, internal.ErrInvalidUUID
+	}
+
+	return Championship{
+		ID:   cuuid,
+		Name: name,
+	}, nil
 }
 
 type ChampionshipSeason struct {
@@ -82,7 +92,7 @@ func (cs *ChampionshipSeason) RemoveRound(r Round) {
 type Seasons []Season
 
 type Season struct {
-	ID        string
+	ID        uuid.UUID
 	StartYear int
 	EndYear   int
 	CreatedAt time.Time
@@ -90,12 +100,21 @@ type Season struct {
 	DeletedAt time.Time
 }
 
-func NewSeason(s int, e int) Season {
+func NewSeason(id string, s int, e int) (Season, error) {
+	if id == "" {
+		id = uuid.NewString()
+	}
+
+	suuid, err := uuid.Parse(id)
+	if err != nil {
+		return Season{}, internal.ErrInvalidUUID
+	}
+
 	return Season{
-		ID:        uuid.NewString(),
+		ID:        suuid,
 		StartYear: s,
 		EndYear:   e,
-	}
+	}, nil
 }
 
 type Rounds []Round
@@ -146,7 +165,7 @@ type ChampionshipRepo interface {
 type SeasonRepo interface {
 	GetSeasons(SeasonFilter) (Seasons, error)
 	//GetSeason(string) (Season, error)
-	//CreateSeason(Season) (Season, error)
+	CreateSeason(Season) (Season, error)
 	//UpdateSeason(string, Season) (Season, error)
 	//DeleteSeason(string) error
 }

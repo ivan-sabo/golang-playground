@@ -23,7 +23,12 @@ func (c ClubMySQLRepo) GetClubs(domain.ClubFilter) (domain.Clubs, error) {
 		return domain.Clubs{}, tx.Error
 	}
 
-	return clubs.ToEntity(), nil
+	dcs, err := clubs.ToEntity()
+	if err != nil {
+		return domain.Clubs{}, err
+	}
+
+	return dcs, nil
 }
 
 func (c ClubMySQLRepo) GetClub(id string) (domain.Club, error) {
@@ -37,7 +42,12 @@ func (c ClubMySQLRepo) GetClub(id string) (domain.Club, error) {
 		return domain.Club{}, tx.Error
 	}
 
-	return club.ToEntity(), nil
+	sc, err := club.ToEntity()
+	if err != nil {
+		return domain.Club{}, err
+	}
+
+	return sc, nil
 }
 
 func (c ClubMySQLRepo) CreateClub(dc domain.Club) (domain.Club, error) {
@@ -48,7 +58,12 @@ func (c ClubMySQLRepo) CreateClub(dc domain.Club) (domain.Club, error) {
 		return domain.Club{}, tx.Error
 	}
 
-	return club.ToEntity(), nil
+	dc, err := club.ToEntity()
+	if err != nil {
+		return domain.Club{}, err
+	}
+
+	return dc, nil
 }
 
 func (c ClubMySQLRepo) UpdateClub(id string, dc domain.Club) (domain.Club, error) {
@@ -68,7 +83,12 @@ func (c ClubMySQLRepo) UpdateClub(id string, dc domain.Club) (domain.Club, error
 		return domain.Club{}, tx.Error
 	}
 
-	return club.ToEntity(), nil
+	dc, err := club.ToEntity()
+	if err != nil {
+		return domain.Club{}, err
+	}
+
+	return dc, nil
 }
 
 func (c ClubMySQLRepo) DeleteClub(id string) error {
