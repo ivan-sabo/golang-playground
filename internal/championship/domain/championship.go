@@ -164,7 +164,7 @@ type SeasonRepo interface {
 	//GetSeason(string) (Season, error)
 	CreateSeason(Season) (Season, error)
 	//UpdateSeason(string, Season) (Season, error)
-	//DeleteSeason(string) error
+	DeleteSeason(string) error
 }
 
 var (

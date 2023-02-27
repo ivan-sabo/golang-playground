@@ -21,7 +21,7 @@ type Club struct {
 
 func NewClub(c domain.Club) Club {
 	return Club{
-		ID:   uuid.NewString(),
+		ID:   c.ID.String(),
 		Name: c.Name,
 	}
 }

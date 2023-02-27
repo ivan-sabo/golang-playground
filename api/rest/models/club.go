@@ -72,10 +72,13 @@ type PostClubRequest struct {
 	Name string `json:"name"`
 }
 
-func (r PostClubRequest) ToEntity() domain.Club {
-	return domain.Club{
-		Name: r.Name,
+func (r PostClubRequest) ToEntity() (domain.Club, error) {
+	dc, err := domain.NewClub("", r.Name)
+	if err != nil {
+		return domain.Club{}, err
 	}
+
+	return dc, nil
 }
 
 // Create Club response

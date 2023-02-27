@@ -25,7 +25,7 @@ func NewClubHandler(ginEngine *gin.Engine, dbConn *gorm.DB) ClubHandler {
 }
 
 func (ch *ClubHandler) AddClubRoutes() {
-	c := ch.GinEngine.Group("/club")
+	c := ch.GinEngine.Group("/clubs")
 
 	c.GET("/:id", ch.getClub)
 	c.PUT("/:id", ch.putClub)
@@ -34,7 +34,7 @@ func (ch *ClubHandler) AddClubRoutes() {
 	c.DELETE("/:id", ch.deleteClub)
 }
 
-// swagger:route GET /club Club getClubs
+// swagger:route GET /clubs Club getClubs
 // Get a list of clubs.
 //
 //	Produces:
@@ -53,7 +53,7 @@ func (ch *ClubHandler) getClubs(c *gin.Context) {
 	c.JSON(http.StatusOK, models.NewGetClubsResponse(clubs))
 }
 
-// swagger:route GET /club/{id} Club getClub
+// swagger:route GET /clubs/{id} Club getClub
 // Get a single club by ID.
 //
 //	Consumes:
@@ -97,7 +97,7 @@ func (ch *ClubHandler) getClub(c *gin.Context) {
 	})
 }
 
-// swagger:route POST /club Club CreateClub
+// swagger:route POST /clubs Club CreateClub
 // Create a new Club.
 //
 //	Consumes:
@@ -110,15 +110,22 @@ func (ch *ClubHandler) getClub(c *gin.Context) {
 //		200: PostClubResponse
 //		500: ErrorResponse
 func (ch *ClubHandler) postClub(c *gin.Context) {
-	var club models.PostClubRequest
-	err := c.ShouldBindJSON(&club)
+	var cr models.PostClubRequest
+	err := c.ShouldBindJSON(&cr)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	dc, err := ch.Repo.CreateClub(club.ToEntity())
+	club, err := cr.ToEntity()
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	dc, err := ch.Repo.CreateClub(club)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
@@ -128,7 +135,7 @@ func (ch *ClubHandler) postClub(c *gin.Context) {
 	c.JSON(http.StatusCreated, models.NewPostClubResponse(dc))
 }
 
-// swagger:route PUT /club/{id} Club UpdateClub
+// swagger:route PUT /clubs/{id} Club UpdateClub
 // Update existing club.
 //
 //	Consumes:
@@ -185,7 +192,7 @@ func (ch *ClubHandler) putClub(c *gin.Context) {
 	c.JSON(http.StatusOK, models.NewPutClubResponse(dc))
 }
 
-// swagger:route DELETE /club/{id} Club DeleteClub
+// swagger:route DELETE /clubs/{id} Club DeleteClub
 // Delete a club.
 //
 //	Parameters:

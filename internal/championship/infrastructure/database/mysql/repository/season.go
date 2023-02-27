@@ -46,3 +46,12 @@ func (c SeasonMySQLRepo) CreateSeason(ds domain.Season) (domain.Season, error) {
 
 	return ds, nil
 }
+
+func (c SeasonMySQLRepo) DeleteSeason(id string) error {
+	tx := c.conn.Delete(&mysql.Season{}, "id = ?", id)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	return nil
+}

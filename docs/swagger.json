@@ -14,7 +14,38 @@
   "host": "localhost:8080",
   "basePath": "/",
   "paths": {
-    "/championship": {
+    "/championship/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Championship"
+        ],
+        "summary": "Get a single Championship by ID.",
+        "operationId": "getChampionship",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetChampionshipResponse"
+          },
+          "404": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/championships": {
       "get": {
         "produces": [
           "application/json"
@@ -61,36 +92,7 @@
         }
       }
     },
-    "/championship/{id}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Championship"
-        ],
-        "summary": "Get a single Championship by ID.",
-        "operationId": "getChampionship",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/GetChampionshipResponse"
-          },
-          "404": {
-            "$ref": "#/responses/ErrorResponse"
-          },
-          "500": {
-            "$ref": "#/responses/ErrorResponse"
-          }
-        }
-      },
+    "/championships/{id}": {
       "put": {
         "consumes": [
           "application/json"
@@ -157,7 +159,7 @@
         }
       }
     },
-    "/club": {
+    "/clubs": {
       "get": {
         "produces": [
           "application/json"
@@ -204,7 +206,7 @@
         }
       }
     },
-    "/club/{id}": {
+    "/clubs/{id}": {
       "get": {
         "consumes": [
           "application/json"
@@ -303,7 +305,7 @@
         }
       }
     },
-    "/season": {
+    "/seasons": {
       "get": {
         "produces": [
           "application/json"
@@ -343,6 +345,31 @@
         "responses": {
           "200": {
             "$ref": "#/responses/PostSeasonResponse"
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/seasons/{id}": {
+      "delete": {
+        "tags": [
+          "Season"
+        ],
+        "summary": "Delete a season.",
+        "operationId": "DeleteSeason",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
           },
           "500": {
             "$ref": "#/responses/ErrorResponse"

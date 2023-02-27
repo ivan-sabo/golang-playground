@@ -25,7 +25,7 @@ func NewChampionshipHandler(ginEngine *gin.Engine, dbConn *gorm.DB) Championship
 }
 
 func (gr *ChampionshipHandler) AddChampionshipRoutes() {
-	c := gr.GinEngine.Group("/championship")
+	c := gr.GinEngine.Group("/championships")
 
 	c.GET("", gr.getChampionships)
 	c.GET("/:id", gr.getChampionship)
@@ -34,7 +34,7 @@ func (gr *ChampionshipHandler) AddChampionshipRoutes() {
 	c.DELETE("/:id", gr.deleteChampionship)
 }
 
-// swagger:route GET /championship Championship getChampionships
+// swagger:route GET /championships Championship getChampionships
 // Get a list of Championships.
 //
 //	Produces:
@@ -91,7 +91,7 @@ func (ch *ChampionshipHandler) getChampionship(c *gin.Context) {
 	c.JSON(http.StatusOK, models.NewGetChampionshipResponse(championship))
 }
 
-// swagger:route POST /championship Championship CreateChampionship
+// swagger:route POST /championships Championship CreateChampionship
 // Create a new Championship.
 //
 //	Consumes:
@@ -104,15 +104,22 @@ func (ch *ChampionshipHandler) getChampionship(c *gin.Context) {
 //		200: PostChampionshipResponse
 //		500: ErrorResponse
 func (ch *ChampionshipHandler) postChampionship(c *gin.Context) {
-	var championship models.PostChampionshipRequest
-	err := c.ShouldBindJSON(&championship)
+	var cr models.PostChampionshipRequest
+	err := c.ShouldBindJSON(&cr)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	dc, err := ch.Repo.CreateChampionship(championship.ToEntity())
+	championship, err := cr.ToEntity()
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	dc, err := ch.Repo.CreateChampionship(championship)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
@@ -122,7 +129,7 @@ func (ch *ChampionshipHandler) postChampionship(c *gin.Context) {
 	c.JSON(http.StatusCreated, models.NewPostChampionshipResponse(dc))
 }
 
-// swagger:route PUT /championship/{id} Championship UpdateChampionship
+// swagger:route PUT /championships/{id} Championship UpdateChampionship
 // Update existing championship.
 //
 //	Consumes:
@@ -179,7 +186,7 @@ func (ch *ChampionshipHandler) putChampionship(c *gin.Context) {
 	c.JSON(http.StatusOK, models.NewPutChampionshipResponse(dc))
 }
 
-// swagger:route DELETE /championship/{id} Championship DeleteChampionship
+// swagger:route DELETE /championships/{id} Championship DeleteChampionship
 // Delete a championship.
 //
 //	Parameters:

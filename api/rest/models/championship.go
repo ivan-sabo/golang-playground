@@ -86,10 +86,13 @@ type PostChampionshipRequest struct {
 	Name string `json:"name"`
 }
 
-func (r PostChampionshipRequest) ToEntity() domain.Championship {
-	return domain.Championship{
-		Name: r.Name,
+func (r PostChampionshipRequest) ToEntity() (domain.Championship, error) {
+	dc, err := domain.NewChampionship("", r.Name)
+	if err != nil {
+		return domain.Championship{}, err
 	}
+
+	return dc, nil
 }
 
 // Create Championship response

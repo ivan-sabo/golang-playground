@@ -55,11 +55,13 @@ type PostSeasonRequest struct {
 	EndYear   int `json:"endYear"`
 }
 
-func (r PostSeasonRequest) ToEntity() domain.Season {
-	return domain.Season{
-		StartYear: r.StartYear,
-		EndYear:   r.EndYear,
+func (r PostSeasonRequest) ToEntity() (domain.Season, error) {
+	ds, err := domain.NewSeason("", r.StartYear, r.EndYear)
+	if err != nil {
+		return domain.Season{}, err
 	}
+
+	return ds, nil
 }
 
 // Create Season response
