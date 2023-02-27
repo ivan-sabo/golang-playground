@@ -8,13 +8,6 @@ import (
 	"github.com/ivan-sabo/golang-playground/internal"
 )
 
-var (
-	Created    Status = "created"
-	Scheduled  Status = "scheduled"
-	InProgress Status = "in progress"
-	Finished   Status = "finished"
-)
-
 type Status string
 
 type Championships []Championship
@@ -100,7 +93,7 @@ type Season struct {
 	DeletedAt time.Time
 }
 
-func NewSeason(id string, s int, e int) (Season, error) {
+func NewSeason(id string, start int, end int) (Season, error) {
 	if id == "" {
 		id = uuid.NewString()
 	}
@@ -110,10 +103,14 @@ func NewSeason(id string, s int, e int) (Season, error) {
 		return Season{}, internal.ErrInvalidUUID
 	}
 
+	if (end - start) != 1 {
+		return Season{}, ErrSeasonDurationInvalid
+	}
+
 	return Season{
 		ID:        suuid,
-		StartYear: s,
-		EndYear:   e,
+		StartYear: start,
+		EndYear:   end,
 	}, nil
 }
 
@@ -171,6 +168,7 @@ type SeasonRepo interface {
 }
 
 var (
-	ErrClubNotFound         = errors.New("club not found")
-	ErrChampionshipNotFound = errors.New("championship not found")
+	ErrClubNotFound          = errors.New("club not found")
+	ErrChampionshipNotFound  = errors.New("championship not found")
+	ErrSeasonDurationInvalid = errors.New("invalid season start and/or end values")
 )

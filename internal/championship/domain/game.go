@@ -4,12 +4,20 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/ivan-sabo/golang-playground/internal"
+)
+
+var (
+	Created    Status = "created"
+	Scheduled  Status = "scheduled"
+	InProgress Status = "in progress"
+	Finished   Status = "finished"
 )
 
 type Games []Game
 
 type Game struct {
-	ID        string
+	ID        uuid.UUID
 	Status    Status
 	Home      Club
 	Away      Club
@@ -32,11 +40,20 @@ func (g *Game) Schedule(start time.Time) {
 	g.Status = Scheduled
 }
 
-func NewGame(home Club, away Club) Game {
+func NewGame(id string, home Club, away Club) (Game, error) {
+	if id == "" {
+		id = uuid.NewString()
+	}
+
+	cuuid, err := uuid.Parse(id)
+	if err != nil {
+		return Game{}, internal.ErrInvalidUUID
+	}
+
 	return Game{
-		ID:     uuid.NewString(),
+		ID:     cuuid,
 		Home:   home,
 		Away:   away,
 		Status: Created,
-	}
+	}, nil
 }

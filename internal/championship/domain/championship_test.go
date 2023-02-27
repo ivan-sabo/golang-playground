@@ -218,7 +218,7 @@ func TestRound(t *testing.T) {
 func testRoundAddGame(t *testing.T, r Round) {
 	t.Helper()
 
-	gID := uuid.NewString()
+	gID := uuid.New()
 	g := Game{
 		ID: gID,
 	}
@@ -235,7 +235,7 @@ func testRoundRemoveGame(t *testing.T, r Round) {
 	t.Helper()
 
 	g := Game{
-		ID: uuid.NewString(),
+		ID: uuid.New(),
 	}
 	r.Games = Games{g}
 	r.RemoveGame(g)

@@ -5,16 +5,26 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/ivan-sabo/golang-playground/internal"
 )
 
 func TestNewGame(t *testing.T) {
+	testNewGameSuccess(t)
+	testNewGameInvalidID(t)
+}
+
+func testNewGameSuccess(t *testing.T) {
 	hc := Club{
 		ID: uuid.New(),
 	}
 	ac := Club{
 		ID: uuid.New(),
 	}
-	g := NewGame(hc, ac)
+	g, err := NewGame("", hc, ac)
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	if g.Home.ID != hc.ID {
 		t.Fatalf("expected %v, got %v", hc.ID, g.Home.ID)
@@ -24,6 +34,22 @@ func TestNewGame(t *testing.T) {
 	}
 	if g.Status != Created {
 		t.Fatalf("expected %v, got %v", Created, g.Status)
+	}
+}
+
+func testNewGameInvalidID(t *testing.T) {
+	hc := Club{
+		ID: uuid.New(),
+	}
+	ac := Club{
+		ID: uuid.New(),
+	}
+	invalidID := "test"
+
+	g, err := NewGame(invalidID, hc, ac)
+
+	if err != internal.ErrInvalidUUID {
+		t.Fatalf("UUID should be invalid and an error should be returned, got: %v, err: %v", g, err)
 	}
 }
 

@@ -35,6 +35,6 @@ func testNewClubInvalidID(t *testing.T) {
 	c, err := NewClub(invalidID, n)
 
 	if err != internal.ErrInvalidUUID {
-		t.Fatalf("UUID should be invalid and an error should be returned, got : %v", c.ID)
+		t.Fatalf("UUID should be invalid and an error should be returned, got : %v, err: %v", c, err)
 	}
 }
