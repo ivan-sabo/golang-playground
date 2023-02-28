@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	models "github.com/ivan-sabo/golang-playground/api/rest/model"
-	"github.com/ivan-sabo/golang-playground/api/rest/service"
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql/repository"
+	"github.com/ivan-sabo/golang-playground/internal/championship/service"
 	"gorm.io/gorm"
 )
 
@@ -244,17 +244,6 @@ func (ch *ChampionshipHandler) registerSeason(c *gin.Context) {
 		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing championshipID parameter")))
 		return
 	}
-	championship, err := ch.ChampionshipRepo.GetChampionship(championshipID)
-	if err == domain.ErrChampionshipNotFound {
-		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
-		return
-	}
-	if err != nil {
-		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
-		return
-	}
 
 	seasonID, exist := c.Params.Get("seasonID")
 	if !exist {
@@ -262,20 +251,8 @@ func (ch *ChampionshipHandler) registerSeason(c *gin.Context) {
 		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing seasonID parameter")))
 		return
 	}
-	season, err := ch.SeasonRepo.GetSeason(seasonID)
-	if err == domain.ErrSeasonNotFound {
-		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
-		return
-	}
-	if err != nil {
-		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
-		return
-	}
 
-	ncs := championship.RegisterSeason(season)
-	cs, err := ch.ChampionshipSeasonRepo.RegisterSeason(ncs)
+	cs, err := ch.ChampionshipService.RegisterSeason(championshipID, seasonID)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
