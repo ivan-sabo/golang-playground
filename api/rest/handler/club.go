@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ivan-sabo/golang-playground/api/rest/models"
+	models "github.com/ivan-sabo/golang-playground/api/rest/model"
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql/repository"
 	"gorm.io/gorm"

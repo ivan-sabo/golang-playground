@@ -6,7 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ivan-sabo/golang-playground/api/rest/models"
+	models "github.com/ivan-sabo/golang-playground/api/rest/model"
+	"github.com/ivan-sabo/golang-playground/api/rest/service"
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql/repository"
 	"gorm.io/gorm"
@@ -17,6 +18,7 @@ type ChampionshipHandler struct {
 	ChampionshipRepo       domain.ChampionshipRepo
 	SeasonRepo             domain.SeasonRepo
 	ChampionshipSeasonRepo domain.ChampionshipSeasonRepo
+	ChampionshipService    service.ChampionshipService
 }
 
 func NewChampionshipHandler(ginEngine *gin.Engine, dbConn *gorm.DB) ChampionshipHandler {
@@ -25,6 +27,7 @@ func NewChampionshipHandler(ginEngine *gin.Engine, dbConn *gorm.DB) Championship
 		ChampionshipRepo:       repository.NewChampionshipMySQLRepo(dbConn),
 		SeasonRepo:             repository.NewSeasonMySQLRepo(dbConn),
 		ChampionshipSeasonRepo: repository.NewChampionshipSeasonMySQLRepo(dbConn),
+		ChampionshipService:    service.NewChampionshipService(dbConn),
 	}
 }
 
@@ -162,27 +165,20 @@ func (ch *ChampionshipHandler) putChampionship(c *gin.Context) {
 		return
 	}
 
-	_, err := ch.ChampionshipRepo.GetChampionship(id)
+	var championship models.PutChampionshipRequest
+	err := c.ShouldBindJSON(&championship)
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	dc, err := ch.ChampionshipService.UpdateChampionship(id, championship.ToEntity())
 	if err == domain.ErrChampionshipNotFound {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
 		return
 	}
-	if err != nil {
-		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
-		return
-	}
-
-	var championship models.PutChampionshipRequest
-	err = c.ShouldBindJSON(&championship)
-	if err != nil {
-		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
-		return
-	}
-
-	dc, err := ch.ChampionshipRepo.UpdateChampionship(id, championship.ToEntity())
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
