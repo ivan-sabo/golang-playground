@@ -92,6 +92,40 @@
         }
       }
     },
+    "/championships/{championshipID}/seasons/{seasonID}": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Championship"
+        ],
+        "summary": "Register Season for Championship.",
+        "operationId": "RegisterSeason",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "championshipID",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "seasonID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/RegisterSeasonResponse"
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      }
+    },
     "/championships/{id}": {
       "put": {
         "consumes": [
@@ -386,16 +420,6 @@
         "name"
       ],
       "properties": {
-        "created_at": {
-          "type": "string",
-          "format": "date-time",
-          "x-go-name": "CreatedAt"
-        },
-        "deleted_at": {
-          "type": "string",
-          "format": "date-time",
-          "x-go-name": "DeletedAt"
-        },
         "id": {
           "type": "string",
           "x-go-name": "ID"
@@ -403,11 +427,18 @@
         "name": {
           "type": "string",
           "x-go-name": "Name"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
+    "ChampionshipSeasonDTO": {
+      "type": "object",
+      "properties": {
+        "Championship": {
+          "$ref": "#/definitions/ChampionshipDTO"
         },
-        "updated_at": {
-          "type": "string",
-          "format": "date-time",
-          "x-go-name": "UpdateAt"
+        "Season": {
+          "$ref": "#/definitions/SeasonDTO"
         }
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
@@ -609,6 +640,15 @@
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
     },
+    "RegisterSeasonResponse": {
+      "type": "object",
+      "properties": {
+        "ChampionshipSeason": {
+          "$ref": "#/definitions/ChampionshipSeasonDTO"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+    },
     "SeasonDTO": {
       "type": "object",
       "properties": {
@@ -687,6 +727,12 @@
       "description": "Create Season response",
       "schema": {
         "$ref": "#/definitions/PostSeasonResponse"
+      }
+    },
+    "RegisterSeasonResponse": {
+      "description": "Create ChampionshipSeason response",
+      "schema": {
+        "$ref": "#/definitions/RegisterSeasonResponse"
       }
     }
   }

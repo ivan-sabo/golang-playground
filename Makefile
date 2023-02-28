@@ -24,3 +24,6 @@ migrate-down:
 
 migrate-drop:
 	migrate -path internal/championship/infrastructure/database/migrations/ -database "mysql://root:test@tcp(localhost:3306)/golang_playground" -verbose drop
+
+migrate-create:
+	migrate create -ext sql -dir internal/championship/infrastructure/database/migrations/ -seq $(name)

@@ -22,8 +22,8 @@ type Championship struct {
 
 func (c Championship) RegisterSeason(s Season) ChampionshipSeason {
 	return ChampionshipSeason{
-		championship: c,
-		season:       s,
+		Championship: c,
+		Season:       s,
 	}
 }
 
@@ -43,40 +43,45 @@ func NewChampionship(id string, name string) (Championship, error) {
 	}, nil
 }
 
+type ChampionshipsSeasons []ChampionshipSeason
+
 type ChampionshipSeason struct {
-	championship Championship
-	season       Season
-	clubs        Clubs
-	rounds       Rounds
+	Championship Championship
+	Season       Season
+	Clubs        Clubs
+	Rounds       Rounds
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	DeletedAt    time.Time
 }
 
 func (cs *ChampionshipSeason) AddClub(c Club) {
-	cs.clubs = append(cs.clubs, c)
+	cs.Clubs = append(cs.Clubs, c)
 }
 
 func (cs *ChampionshipSeason) RemoveClub(c Club) {
-	for n, cl := range cs.clubs {
+	for n, cl := range cs.Clubs {
 		if cl.ID == c.ID {
-			cs.clubs[n] = cs.clubs[len(cs.clubs)-1]
-			cs.clubs = cs.clubs[:len(cs.clubs)-1]
+			cs.Clubs[n] = cs.Clubs[len(cs.Clubs)-1]
+			cs.Clubs = cs.Clubs[:len(cs.Clubs)-1]
 			break
 		}
 	}
 
-	for i := range cs.rounds {
-		cs.rounds[i].removeClub(c)
+	for i := range cs.Rounds {
+		cs.Rounds[i].removeClub(c)
 	}
 }
 
 func (cs *ChampionshipSeason) AddRound(r Round) {
-	cs.rounds = append(cs.rounds, r)
+	cs.Rounds = append(cs.Rounds, r)
 }
 
 func (cs *ChampionshipSeason) RemoveRound(r Round) {
-	for n, ro := range cs.rounds {
+	for n, ro := range cs.Rounds {
 		if ro.NO == r.NO {
-			cs.rounds[n] = cs.rounds[len(cs.rounds)-1]
-			cs.rounds = cs.rounds[:len(cs.rounds)-1]
+			cs.Rounds[n] = cs.Rounds[len(cs.Rounds)-1]
+			cs.Rounds = cs.Rounds[:len(cs.Rounds)-1]
 			break
 		}
 	}
@@ -151,6 +156,12 @@ type SeasonFilter struct {
 	EndYear   int
 }
 
+type ChampionshipSeasonFilter struct {
+	ChampionshipID string
+	SeasonID       string
+	IncludeDeleted bool
+}
+
 type ChampionshipRepo interface {
 	GetChampionships() (Championships, error)
 	GetChampionship(string) (Championship, error)
@@ -161,14 +172,22 @@ type ChampionshipRepo interface {
 
 type SeasonRepo interface {
 	GetSeasons(SeasonFilter) (Seasons, error)
-	//GetSeason(string) (Season, error)
+	GetSeason(string) (Season, error)
 	CreateSeason(Season) (Season, error)
 	//UpdateSeason(string, Season) (Season, error)
 	DeleteSeason(string) error
 }
 
+type ChampionshipSeasonRepo interface {
+	RegisterSeason(ChampionshipSeason) (ChampionshipSeason, error)
+	GetChampionshipsSeasons(ChampionshipSeasonFilter) (ChampionshipsSeasons, error)
+}
+
 var (
-	ErrClubNotFound          = errors.New("club not found")
-	ErrChampionshipNotFound  = errors.New("championship not found")
-	ErrSeasonDurationInvalid = errors.New("invalid season start and/or end values")
+	ErrClubNotFound               = errors.New("club not found")
+	ErrChampionshipNotFound       = errors.New("championship not found")
+	ErrSeasonNotFound             = errors.New("season not found")
+	ErrSeasonAlreadyRegistered    = errors.New("season already registered for championship")
+	ErrChampionshipSeasonNotFound = errors.New("ChampionshipSeason not found")
+	ErrSeasonDurationInvalid      = errors.New("invalid season start and/or end values")
 )

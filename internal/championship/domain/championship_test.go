@@ -86,11 +86,11 @@ func TestRegisterSeason(t *testing.T) {
 	}
 
 	cs := c.RegisterSeason(s)
-	if cs.championship.ID != cID {
-		t.Fatalf("expected %v, got %v", cID, cs.championship.ID)
+	if cs.Championship.ID != cID {
+		t.Fatalf("expected %v, got %v", cID, cs.Championship.ID)
 	}
-	if cs.season.ID != sID {
-		t.Fatalf("expected %v, got %v", sID, cs.season.ID)
+	if cs.Season.ID != sID {
+		t.Fatalf("expected %v, got %v", sID, cs.Season.ID)
 	}
 }
 
@@ -125,11 +125,11 @@ func testChampionshipSeasonAddClub(t *testing.T, cs ChampionshipSeason) {
 	}
 
 	cs.AddClub(c)
-	if len(cs.clubs) != 1 {
-		t.Fatalf("there should be one club registered, have %v clubs", len(cs.clubs))
+	if len(cs.Clubs) != 1 {
+		t.Fatalf("there should be one club registered, have %v clubs", len(cs.Clubs))
 	}
-	if cs.clubs[0].ID != cID {
-		t.Fatalf("expected %v, got %v", cID, cs.clubs[0].ID)
+	if cs.Clubs[0].ID != cID {
+		t.Fatalf("expected %v, got %v", cID, cs.Clubs[0].ID)
 	}
 }
 
@@ -140,8 +140,8 @@ func testChampionshipSeasonRemoveClub(t *testing.T, cs ChampionshipSeason) {
 	c := Club{
 		ID: cID,
 	}
-	cs.clubs = Clubs{c}
-	cs.rounds = Rounds{
+	cs.Clubs = Clubs{c}
+	cs.Rounds = Rounds{
 		{
 			NO: 1,
 			Games: Games{
@@ -160,10 +160,10 @@ func testChampionshipSeasonRemoveClub(t *testing.T, cs ChampionshipSeason) {
 		},
 	}
 	cs.RemoveClub(c)
-	if len(cs.clubs) != 0 {
-		t.Fatalf("there should be no clubs registered, have %v club(s)", len(cs.clubs))
+	if len(cs.Clubs) != 0 {
+		t.Fatalf("there should be no clubs registered, have %v club(s)", len(cs.Clubs))
 	}
-	for _, r := range cs.rounds {
+	for _, r := range cs.Rounds {
 		if len(r.Games) != 0 {
 			t.Fatalf("all rounds should be empty, got %#v", r.Games)
 		}
@@ -178,11 +178,11 @@ func testChampionshipSeasonAddRound(t *testing.T, cs ChampionshipSeason) {
 		NO: rNO,
 	}
 	cs.AddRound(r)
-	if len(cs.rounds) != 1 {
-		t.Fatalf("there should be one round in ChampionshipSeason, got %v", len(cs.rounds))
+	if len(cs.Rounds) != 1 {
+		t.Fatalf("there should be one round in ChampionshipSeason, got %v", len(cs.Rounds))
 	}
-	if cs.rounds[0].NO != 1 {
-		t.Fatalf("expected %v, got %v", rNO, cs.rounds[0])
+	if cs.Rounds[0].NO != 1 {
+		t.Fatalf("expected %v, got %v", rNO, cs.Rounds[0])
 	}
 }
 
@@ -193,10 +193,10 @@ func testChampionshipSeasonRemoveRound(t *testing.T, cs ChampionshipSeason) {
 	r := Round{
 		NO: rNO,
 	}
-	cs.rounds = Rounds{r}
+	cs.Rounds = Rounds{r}
 	cs.RemoveRound(r)
-	if len(cs.rounds) != 0 {
-		t.Fatalf("there should be zero rounds in ChampionshipSeason, got %v", len(cs.rounds))
+	if len(cs.Rounds) != 0 {
+		t.Fatalf("there should be zero rounds in ChampionshipSeason, got %v", len(cs.Rounds))
 	}
 }
 

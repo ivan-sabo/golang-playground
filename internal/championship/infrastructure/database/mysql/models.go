@@ -58,6 +58,7 @@ type Championships []Championship
 type Championship struct {
 	ID        string `gorm:"primaryKey"`
 	Name      string
+	Seasons   Seasons `gorm:"many2many:championship_season;"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt
@@ -145,4 +146,65 @@ func (s Season) ToEntity() (domain.Season, error) {
 		UpdatedAt: s.UpdatedAt,
 		DeletedAt: s.DeletedAt.Time,
 	}, nil
+}
+
+type ChampionshipsSeasons []ChampionshipSeason
+
+type ChampionshipSeason struct {
+	ChampionshipID string `gorm:"primaryKey"`
+	SeasonID       string `gorm:"primaryKey"`
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	DeletedAt      gorm.DeletedAt
+}
+
+func (cs ChampionshipSeason) TableName() string {
+	return "championship_season"
+}
+
+func (cs *ChampionshipSeason) ToEntity(dc domain.Championship, ds domain.Season) domain.ChampionshipSeason {
+	return domain.ChampionshipSeason{
+		Championship: dc,
+		Season:       ds,
+		CreatedAt:    cs.CreatedAt,
+		UpdatedAt:    cs.UpdatedAt,
+		DeletedAt:    cs.DeletedAt.Time,
+	}
+}
+
+func NewChampionshipSeason(c domain.Championship, s domain.Season) ChampionshipSeason {
+	return ChampionshipSeason{
+		ChampionshipID: c.ID.String(),
+		SeasonID:       s.ID.String(),
+	}
+}
+
+func (cs ChampionshipsSeasons) ToEntity(dcs domain.Championships, dss domain.Seasons) domain.ChampionshipsSeasons {
+	championshipsSeasons := make(domain.ChampionshipsSeasons, 0, len(cs))
+	mdcs := mapChampionships(dcs)
+	mdss := mapSeasons(dss)
+
+	for _, c := range cs {
+		championshipsSeasons = append(championshipsSeasons, c.ToEntity(mdcs[c.ChampionshipID], mdss[c.SeasonID]))
+	}
+
+	return championshipsSeasons
+}
+
+func mapChampionships(dcs domain.Championships) map[string]domain.Championship {
+	m := make(map[string]domain.Championship)
+	for _, dc := range dcs {
+		m[dc.ID.String()] = dc
+	}
+
+	return m
+}
+
+func mapSeasons(dss domain.Seasons) map[string]domain.Season {
+	m := make(map[string]domain.Season)
+	for _, ds := range dss {
+		m[ds.ID.String()] = ds
+	}
+
+	return m
 }

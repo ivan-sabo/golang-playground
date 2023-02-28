@@ -13,14 +13,18 @@ import (
 )
 
 type ChampionshipHandler struct {
-	GinEngine *gin.Engine
-	Repo      domain.ChampionshipRepo
+	GinEngine              *gin.Engine
+	ChampionshipRepo       domain.ChampionshipRepo
+	SeasonRepo             domain.SeasonRepo
+	ChampionshipSeasonRepo domain.ChampionshipSeasonRepo
 }
 
 func NewChampionshipHandler(ginEngine *gin.Engine, dbConn *gorm.DB) ChampionshipHandler {
 	return ChampionshipHandler{
-		GinEngine: ginEngine,
-		Repo:      repository.NewChampionshipMySQLRepo(dbConn),
+		GinEngine:              ginEngine,
+		ChampionshipRepo:       repository.NewChampionshipMySQLRepo(dbConn),
+		SeasonRepo:             repository.NewSeasonMySQLRepo(dbConn),
+		ChampionshipSeasonRepo: repository.NewChampionshipSeasonMySQLRepo(dbConn),
 	}
 }
 
@@ -32,6 +36,8 @@ func (gr *ChampionshipHandler) AddChampionshipRoutes() {
 	c.POST("", gr.postChampionship)
 	c.PUT("/:id", gr.putChampionship)
 	c.DELETE("/:id", gr.deleteChampionship)
+
+	c.POST("/:championshipID/seasons/:seasonID", gr.registerSeason)
 }
 
 // swagger:route GET /championships Championship getChampionships
@@ -43,7 +49,7 @@ func (gr *ChampionshipHandler) AddChampionshipRoutes() {
 //	responses:
 //		200: GetChampionshipsResponse
 func (gr *ChampionshipHandler) getChampionships(c *gin.Context) {
-	championships, err := gr.Repo.GetChampionships()
+	championships, err := gr.ChampionshipRepo.GetChampionships()
 	if err != nil {
 		log.Printf("An error occured: %v", err)
 		return
@@ -76,7 +82,7 @@ func (ch *ChampionshipHandler) getChampionship(c *gin.Context) {
 		return
 	}
 
-	championship, err := ch.Repo.GetChampionship(id)
+	championship, err := ch.ChampionshipRepo.GetChampionship(id)
 	if err == domain.ErrChampionshipNotFound {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
@@ -119,7 +125,7 @@ func (ch *ChampionshipHandler) postChampionship(c *gin.Context) {
 		return
 	}
 
-	dc, err := ch.Repo.CreateChampionship(championship)
+	dc, err := ch.ChampionshipRepo.CreateChampionship(championship)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
@@ -156,7 +162,7 @@ func (ch *ChampionshipHandler) putChampionship(c *gin.Context) {
 		return
 	}
 
-	_, err := ch.Repo.GetChampionship(id)
+	_, err := ch.ChampionshipRepo.GetChampionship(id)
 	if err == domain.ErrChampionshipNotFound {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
@@ -176,7 +182,7 @@ func (ch *ChampionshipHandler) putChampionship(c *gin.Context) {
 		return
 	}
 
-	dc, err := ch.Repo.UpdateChampionship(id, championship.ToEntity())
+	dc, err := ch.ChampionshipRepo.UpdateChampionship(id, championship.ToEntity())
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
@@ -206,7 +212,7 @@ func (ch *ChampionshipHandler) deleteChampionship(c *gin.Context) {
 		return
 	}
 
-	err := ch.Repo.DeleteChampionship(id)
+	err := ch.ChampionshipRepo.DeleteChampionship(id)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
@@ -214,4 +220,71 @@ func (ch *ChampionshipHandler) deleteChampionship(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
+}
+
+// swagger:route POST /championships/{championshipID}/seasons/{seasonID} Championship RegisterSeason
+// Register Season for Championship.
+//
+//	Parameters:
+//		+ name: championshipID
+//		in: path
+//		required: true
+//		type: string
+//		+ name: seasonID
+//		in: path
+//		required: true
+//		type: string
+//
+//	Produces:
+//		- application/json
+//
+//	responses:
+//		200: RegisterSeasonResponse
+//		500: ErrorResponse
+func (ch *ChampionshipHandler) registerSeason(c *gin.Context) {
+	championshipID, exist := c.Params.Get("championshipID")
+	if !exist {
+		log.Printf("championship id was not provided")
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing championshipID parameter")))
+		return
+	}
+	championship, err := ch.ChampionshipRepo.GetChampionship(championshipID)
+	if err == domain.ErrChampionshipNotFound {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		return
+	}
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	seasonID, exist := c.Params.Get("seasonID")
+	if !exist {
+		log.Printf("season id was not provided")
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing seasonID parameter")))
+		return
+	}
+	season, err := ch.SeasonRepo.GetSeason(seasonID)
+	if err == domain.ErrSeasonNotFound {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		return
+	}
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	ncs := championship.RegisterSeason(season)
+	cs, err := ch.ChampionshipSeasonRepo.RegisterSeason(ncs)
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusCreated, models.NewChampionshipSeason(cs))
 }

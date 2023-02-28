@@ -1,8 +1,6 @@
 package models
 
 import (
-	"time"
-
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 )
 
@@ -31,21 +29,12 @@ type ChampionshipDTO struct {
 
 	// required: true
 	Name string `json:"name"`
-
-	CreatedAt time.Time `json:"created_at"`
-
-	UpdateAt time.Time `json:"updated_at"`
-
-	DeletedAt time.Time `json:"deleted_at"`
 }
 
 func NewChampionshipDTO(c domain.Championship) ChampionshipDTO {
 	return ChampionshipDTO{
-		ID:        c.ID.String(),
-		Name:      c.Name,
-		CreatedAt: c.CreatedAt,
-		UpdateAt:  c.UpdatedAt,
-		DeletedAt: c.DeletedAt,
+		ID:   c.ID.String(),
+		Name: c.Name,
 	}
 }
 
