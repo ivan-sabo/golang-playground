@@ -429,7 +429,7 @@
           "x-go-name": "Name"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "ChampionshipSeasonDTO": {
       "type": "object",
@@ -441,14 +441,14 @@
           "$ref": "#/definitions/SeasonDTO"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "ChampionshipsDTO": {
       "type": "array",
       "items": {
         "$ref": "#/definitions/ChampionshipDTO"
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "ClubDTO": {
       "type": "object",
@@ -465,14 +465,14 @@
           "x-go-name": "Name"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "ClubsDTO": {
       "type": "array",
       "items": {
         "$ref": "#/definitions/ClubDTO"
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "ErrorResponse": {
       "type": "object",
@@ -482,7 +482,7 @@
           "x-go-name": "Error"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "GetChampionshipResponse": {
       "type": "object",
@@ -491,7 +491,7 @@
           "$ref": "#/definitions/ChampionshipDTO"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "GetChampionshipsResponse": {
       "type": "object",
@@ -500,7 +500,7 @@
           "$ref": "#/definitions/ChampionshipsDTO"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "GetClubResponse": {
       "type": "object",
@@ -509,7 +509,7 @@
           "$ref": "#/definitions/ClubDTO"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "GetClubsResponse": {
       "type": "object",
@@ -518,7 +518,7 @@
           "$ref": "#/definitions/ClubsDTO"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "GetSeasonsResponse": {
       "type": "object",
@@ -527,7 +527,7 @@
           "$ref": "#/definitions/SeasonsDTO"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "PostChampionshipRequest": {
       "type": "object",
@@ -537,7 +537,7 @@
           "x-go-name": "Name"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "PostChampionshipResponse": {
       "type": "object",
@@ -546,7 +546,7 @@
           "$ref": "#/definitions/ChampionshipDTO"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "PostClubRequest": {
       "type": "object",
@@ -556,7 +556,7 @@
           "x-go-name": "Name"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "PostClubResponse": {
       "type": "object",
@@ -565,7 +565,7 @@
           "$ref": "#/definitions/ClubDTO"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "PostSeasonRequest": {
       "type": "object",
@@ -581,7 +581,7 @@
           "x-go-name": "StartYear"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "PostSeasonResponse": {
       "type": "object",
@@ -590,7 +590,7 @@
           "$ref": "#/definitions/SeasonDTO"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "PutChampionshipRequest": {
       "type": "object",
@@ -600,7 +600,7 @@
           "x-go-name": "Name"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "PutChampionshipResponse": {
       "type": "object",
@@ -614,7 +614,7 @@
           "x-go-name": "Name"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "PutClubRequest": {
       "type": "object",
@@ -624,7 +624,7 @@
           "x-go-name": "Name"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "PutClubResponse": {
       "type": "object",
@@ -638,7 +638,7 @@
           "x-go-name": "Name"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "RegisterSeasonResponse": {
       "type": "object",
@@ -647,7 +647,7 @@
           "$ref": "#/definitions/ChampionshipSeasonDTO"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "SeasonDTO": {
       "type": "object",
@@ -664,14 +664,14 @@
           "format": "int64"
         }
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
     "SeasonsDTO": {
       "type": "array",
       "items": {
         "$ref": "#/definitions/SeasonDTO"
       },
-      "x-go-package": "_/home/ivan/Work/golang/api/rest/models"
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     }
   },
   "responses": {

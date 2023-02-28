@@ -71,14 +71,15 @@ func (r *ChampionshipSeasonMySQLRepo) RegisterSeason(ds domain.ChampionshipSeaso
 
 func (r *ChampionshipSeasonMySQLRepo) GetChampionshipsSeasons(csf domain.ChampionshipSeasonFilter) (domain.ChampionshipsSeasons, error) {
 	var championshipsSeasons mysql.ChampionshipsSeasons
-	tx := r.conn.Where(
-		"championship_id = ? AND season_id = ?",
-		csf.ChampionshipID,
-		csf.SeasonID,
-	).First(&championshipsSeasons)
-	if tx.Error == gorm.ErrRecordNotFound {
-		return domain.ChampionshipsSeasons{}, domain.ErrChampionshipSeasonNotFound
+
+	q := make(map[string]interface{})
+	if csf.ChampionshipID != "" {
+		q["championship_id"] = csf.ChampionshipID
 	}
+	if csf.SeasonID != "" {
+		q["season_id"] = csf.SeasonID
+	}
+	tx := r.conn.Where(q).Find(&championshipsSeasons)
 	if tx.Error != nil {
 		return domain.ChampionshipsSeasons{}, tx.Error
 	}
