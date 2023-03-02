@@ -9,32 +9,25 @@ import (
 	"github.com/google/uuid"
 	models "github.com/ivan-sabo/golang-playground/api/rest/model"
 	"github.com/ivan-sabo/golang-playground/internal"
+	"github.com/ivan-sabo/golang-playground/internal/championship/application/service"
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
-	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql/repository"
-	"github.com/ivan-sabo/golang-playground/internal/championship/service"
 	"gorm.io/gorm"
 )
 
 type ChampionshipHandler struct {
-	GinEngine              *gin.Engine
-	ChampionshipRepo       domain.ChampionshipRepo
-	SeasonRepo             domain.SeasonRepo
-	ChampionshipSeasonRepo domain.ChampionshipSeasonRepo
-	ChampionshipService    service.ChampionshipService
+	ginEngine           *gin.Engine
+	ChampionshipService service.ChampionshipService
 }
 
 func NewChampionshipHandler(ginEngine *gin.Engine, dbConn *gorm.DB) ChampionshipHandler {
 	return ChampionshipHandler{
-		GinEngine:              ginEngine,
-		ChampionshipRepo:       repository.NewChampionshipMySQLRepo(dbConn),
-		SeasonRepo:             repository.NewSeasonMySQLRepo(dbConn),
-		ChampionshipSeasonRepo: repository.NewChampionshipSeasonMySQLRepo(dbConn),
-		ChampionshipService:    service.NewChampionshipService(dbConn),
+		ginEngine:           ginEngine,
+		ChampionshipService: service.NewChampionshipService(dbConn),
 	}
 }
 
 func (gr *ChampionshipHandler) AddChampionshipRoutes() {
-	c := gr.GinEngine.Group("/championships")
+	c := gr.ginEngine.Group("/championships")
 	{
 		c.GET("", gr.getChampionships)
 		c.GET("/:championshipID", gr.getChampionship)
@@ -43,7 +36,7 @@ func (gr *ChampionshipHandler) AddChampionshipRoutes() {
 		c.DELETE("/:championshipID", gr.deleteChampionship)
 	}
 
-	c = gr.GinEngine.Group("/championships/:championshipID")
+	c = gr.ginEngine.Group("/championships/:championshipID")
 	{
 		c.GET("/seasons", gr.getChampionshipsSeasons)
 		c.POST("/seasons/:seasonID", gr.registerSeason)
@@ -60,7 +53,7 @@ func (gr *ChampionshipHandler) AddChampionshipRoutes() {
 //		200: GetChampionshipsResponse
 func (gr *ChampionshipHandler) getChampionships(c *gin.Context) {
 	// @todo: implement filter
-	championships, err := gr.ChampionshipRepo.GetChampionships(domain.ChampionshipFilter{})
+	championships, err := gr.ChampionshipService.GetChampionships(domain.ChampionshipFilter{})
 	if err != nil {
 		log.Printf("An error occured: %v", err)
 		return
@@ -94,7 +87,7 @@ func (ch *ChampionshipHandler) getChampionship(c *gin.Context) {
 		return
 	}
 
-	championship, err := ch.ChampionshipRepo.GetChampionship(id)
+	championship, err := ch.ChampionshipService.GetChampionship(id)
 	if err == domain.ErrChampionshipNotFound {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
@@ -137,7 +130,7 @@ func (ch *ChampionshipHandler) postChampionship(c *gin.Context) {
 		return
 	}
 
-	dc, err := ch.ChampionshipRepo.CreateChampionship(championship)
+	dc, err := ch.ChampionshipService.CreateChampionship(championship)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
@@ -219,7 +212,7 @@ func (ch *ChampionshipHandler) deleteChampionship(c *gin.Context) {
 		return
 	}
 
-	err := ch.ChampionshipRepo.DeleteChampionship(id)
+	err := ch.ChampionshipService.DeleteChampionship(id)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
@@ -323,7 +316,7 @@ func (ch *ChampionshipHandler) getChampionshipsSeasons(c *gin.Context) {
 		csFilter.SeasonID = seasonUUID.String()
 	}
 
-	csss, err := ch.ChampionshipSeasonRepo.GetChampionshipsSeasons(csFilter)
+	csss, err := ch.ChampionshipService.GetChampionshipsSeasons(csFilter)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))

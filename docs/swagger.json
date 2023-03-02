@@ -442,6 +442,38 @@
       }
     },
     "/seasons/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Season"
+        ],
+        "summary": "Get a single Season by ID.",
+        "operationId": "getSeason",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetSeasonResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      },
       "delete": {
         "tags": [
           "Season"
@@ -587,6 +619,15 @@
       "properties": {
         "clubs": {
           "$ref": "#/definitions/ClubsDTO"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
+    },
+    "GetSeasonResponse": {
+      "type": "object",
+      "properties": {
+        "season": {
+          "$ref": "#/definitions/SeasonDTO"
         }
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
@@ -780,6 +821,12 @@
       "description": "List of Clubs response.",
       "schema": {
         "$ref": "#/definitions/GetClubsResponse"
+      }
+    },
+    "GetSeasonResponse": {
+      "description": "Single Season response",
+      "schema": {
+        "$ref": "#/definitions/GetSeasonResponse"
       }
     },
     "GetSeasonsResponse": {

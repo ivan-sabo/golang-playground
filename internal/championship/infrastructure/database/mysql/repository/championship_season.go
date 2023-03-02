@@ -6,17 +6,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type ChampionshipSeasonMySQLRepo struct {
+type championshipSeasonMySQLRepo struct {
 	conn *gorm.DB
 }
 
-func NewChampionshipSeasonMySQLRepo(conn *gorm.DB) *ChampionshipSeasonMySQLRepo {
-	return &ChampionshipSeasonMySQLRepo{
+func NewChampionshipSeasonMySQLRepo(conn *gorm.DB) *championshipSeasonMySQLRepo {
+	return &championshipSeasonMySQLRepo{
 		conn: conn,
 	}
 }
 
-func (r *ChampionshipSeasonMySQLRepo) RegisterSeason(ds domain.ChampionshipSeason) (domain.ChampionshipSeason, error) {
+func (r *championshipSeasonMySQLRepo) RegisterSeason(ds domain.ChampionshipSeason) (domain.ChampionshipSeason, error) {
 	var championship mysql.Championship
 	tx := r.conn.Where("id = ?", ds.Championship.ID.String()).First(&championship)
 	if tx.Error == gorm.ErrRecordNotFound {
@@ -69,7 +69,7 @@ func (r *ChampionshipSeasonMySQLRepo) RegisterSeason(ds domain.ChampionshipSeaso
 	}, nil
 }
 
-func (r *ChampionshipSeasonMySQLRepo) GetChampionshipsSeasons(csf domain.ChampionshipSeasonFilter) (domain.ChampionshipsSeasons, error) {
+func (r *championshipSeasonMySQLRepo) GetChampionshipsSeasons(csf domain.ChampionshipSeasonFilter) (domain.ChampionshipsSeasons, error) {
 	var championshipsSeasons mysql.ChampionshipsSeasons
 
 	q := make(map[string]interface{})

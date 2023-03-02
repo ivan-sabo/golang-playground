@@ -80,3 +80,20 @@ func NewPostSeasonResponse(s domain.Season) PostSeasonResponse {
 		Season: NewSeasonDTO(s),
 	}
 }
+
+// Single Season response
+// swagger:response GetSeasonResponse
+type GetSeasonResponseWrapper struct {
+	// in: body
+	Body GetSeasonResponse
+}
+
+type GetSeasonResponse struct {
+	Season SeasonDTO `json:"season"`
+}
+
+func NewGetSeasonResponse(s domain.Season) GetSeasonResponse {
+	return GetSeasonResponse{
+		Season: NewSeasonDTO(s),
+	}
+}

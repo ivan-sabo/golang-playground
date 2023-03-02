@@ -64,7 +64,7 @@ func NewGetChampionshipResponse(c domain.Championship) GetChampionshipResponse {
 	}
 }
 
-// Single Championship request
+// Create Championship request
 // swagger:parameters CreateChampionship
 type PostChampionshipRequestWrapper struct {
 	// in: body

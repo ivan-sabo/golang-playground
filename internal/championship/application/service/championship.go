@@ -8,8 +8,8 @@ import (
 
 type ChampionshipService struct {
 	championshipRepo       domain.ChampionshipRepo
-	seasonRepo             domain.SeasonRepo
 	championshipSeasonRepo domain.ChampionshipSeasonRepo
+	seasonRepo             domain.SeasonRepo
 }
 
 func NewChampionshipService(conn *gorm.DB) ChampionshipService {
@@ -52,4 +52,49 @@ func (cs *ChampionshipService) RegisterSeason(championshipID string, seasonID st
 	}
 
 	return dcs, nil
+}
+
+func (cs *ChampionshipService) GetChampionships(f domain.ChampionshipFilter) (domain.Championships, error) {
+	c, err := cs.championshipRepo.GetChampionships(f)
+	if err != nil {
+		return domain.Championships{}, err
+	}
+
+	return c, nil
+}
+
+func (cs *ChampionshipService) GetChampionship(id string) (domain.Championship, error) {
+	c, err := cs.championshipRepo.GetChampionship(id)
+	if err != nil {
+		return domain.Championship{}, err
+	}
+
+	return c, nil
+}
+
+func (cs *ChampionshipService) CreateChampionship(c domain.Championship) (domain.Championship, error) {
+	c, err := cs.championshipRepo.CreateChampionship(c)
+	if err != nil {
+		return domain.Championship{}, err
+	}
+
+	return c, nil
+}
+
+func (cs *ChampionshipService) DeleteChampionship(id string) error {
+	err := cs.championshipRepo.DeleteChampionship(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cs *ChampionshipService) GetChampionshipsSeasons(f domain.ChampionshipSeasonFilter) (domain.ChampionshipsSeasons, error) {
+	c, err := cs.championshipSeasonRepo.GetChampionshipsSeasons(f)
+	if err != nil {
+		return domain.ChampionshipsSeasons{}, err
+	}
+
+	return c, nil
 }

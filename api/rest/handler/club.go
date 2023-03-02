@@ -7,25 +7,25 @@ import (
 
 	"github.com/gin-gonic/gin"
 	models "github.com/ivan-sabo/golang-playground/api/rest/model"
+	"github.com/ivan-sabo/golang-playground/internal/championship/application/service"
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
-	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql/repository"
 	"gorm.io/gorm"
 )
 
 type ClubHandler struct {
-	GinEngine *gin.Engine
-	Repo      domain.ClubRepo
+	ginEngine   *gin.Engine
+	clubService *service.ClubService
 }
 
 func NewClubHandler(ginEngine *gin.Engine, dbConn *gorm.DB) ClubHandler {
 	return ClubHandler{
-		GinEngine: ginEngine,
-		Repo:      repository.NewClubMySQLRepo(dbConn),
+		ginEngine:   ginEngine,
+		clubService: service.NewClubService(dbConn),
 	}
 }
 
 func (ch *ClubHandler) AddClubRoutes() {
-	c := ch.GinEngine.Group("/clubs")
+	c := ch.ginEngine.Group("/clubs")
 
 	c.GET("/:id", ch.getClub)
 	c.PUT("/:id", ch.putClub)
@@ -43,7 +43,7 @@ func (ch *ClubHandler) AddClubRoutes() {
 //	responses:
 //		200: GetClubsResponse
 func (ch *ClubHandler) getClubs(c *gin.Context) {
-	clubs, err := ch.Repo.GetClubs(domain.ClubFilter{})
+	clubs, err := ch.clubService.GetClubs(domain.ClubFilter{})
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
@@ -81,7 +81,7 @@ func (ch *ClubHandler) getClub(c *gin.Context) {
 		return
 	}
 
-	club, err := ch.Repo.GetClub(id)
+	club, err := ch.clubService.GetClub(id)
 	if err == domain.ErrClubNotFound {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
@@ -126,7 +126,7 @@ func (ch *ClubHandler) postClub(c *gin.Context) {
 		return
 	}
 
-	dc, err := ch.Repo.CreateClub(club)
+	dc, err := ch.clubService.CreateClub(club)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
@@ -164,7 +164,7 @@ func (ch *ClubHandler) putClub(c *gin.Context) {
 		return
 	}
 
-	_, err := ch.Repo.GetClub(id)
+	_, err := ch.clubService.GetClub(id)
 	if err == domain.ErrClubNotFound {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
@@ -184,7 +184,7 @@ func (ch *ClubHandler) putClub(c *gin.Context) {
 		return
 	}
 
-	dc, err := ch.Repo.UpdateClub(id, club.ToEntity())
+	dc, err := ch.clubService.UpdateClub(id, club.ToEntity())
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
@@ -215,7 +215,7 @@ func (ch *ClubHandler) deleteClub(c *gin.Context) {
 		return
 	}
 
-	err := ch.Repo.DeleteClub(id)
+	err := ch.clubService.DeleteClub(id)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))

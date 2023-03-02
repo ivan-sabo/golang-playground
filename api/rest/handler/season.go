@@ -7,20 +7,20 @@ import (
 
 	"github.com/gin-gonic/gin"
 	models "github.com/ivan-sabo/golang-playground/api/rest/model"
+	"github.com/ivan-sabo/golang-playground/internal/championship/application/service"
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
-	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql/repository"
 	"gorm.io/gorm"
 )
 
 type SeasonHandler struct {
-	GinEngine *gin.Engine
-	Repo      domain.SeasonRepo
+	GinEngine     *gin.Engine
+	seasonService *service.SeasonService
 }
 
 func NewSeasonHandler(g *gin.Engine, conn *gorm.DB) SeasonHandler {
 	return SeasonHandler{
-		GinEngine: g,
-		Repo:      repository.NewSeasonMySQLRepo(conn),
+		GinEngine:     g,
+		seasonService: service.NewSeasonService(conn),
 	}
 }
 
@@ -30,7 +30,6 @@ func (h *SeasonHandler) AddSeasonRoutes() {
 	g.GET("", h.getSeasons)
 	g.GET("/:id", h.getSeason)
 	g.POST("", h.createSeason)
-	g.PUT("", h.updateSeason)
 	g.DELETE("/:id", h.deleteSeason)
 }
 
@@ -43,7 +42,7 @@ func (h *SeasonHandler) AddSeasonRoutes() {
 //	responses:
 //		200: GetSeasonsResponse
 func (h *SeasonHandler) getSeasons(c *gin.Context) {
-	seasons, err := h.Repo.GetSeasons(domain.SeasonFilter{})
+	seasons, err := h.seasonService.GetSeasons(domain.SeasonFilter{})
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
@@ -53,8 +52,43 @@ func (h *SeasonHandler) getSeasons(c *gin.Context) {
 	c.JSON(http.StatusOK, models.NewGetSeasonsResponse(seasons))
 }
 
+// swagger:route GET /seasons/{id} Season getSeason
+// Get a single Season by ID.
+//
+//	Produces:
+//		- application/json
+//
+//	Parameters:
+//		+ name: id
+//		in: path
+//		required: true
+//		type: string
+//
+//	responses:
+//		200: GetSeasonResponse
+//		400: ErrorResponse
+//		404: ErrorResponse
+//		500: ErrorResponse
 func (h *SeasonHandler) getSeason(c *gin.Context) {
+	id, exist := c.Params.Get("id")
+	if !exist {
+		log.Printf("season id was not provided")
+		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
+		return
+	}
+	season, err := h.seasonService.GetSeason(id)
+	if err == domain.ErrSeasonNotFound {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		return
+	}
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		return
+	}
 
+	c.JSON(http.StatusOK, models.NewGetSeasonResponse(season))
 }
 
 // swagger:route POST /seasons Season CreateSeason
@@ -85,7 +119,7 @@ func (h *SeasonHandler) createSeason(c *gin.Context) {
 		return
 	}
 
-	ds, err := h.Repo.CreateSeason(season)
+	ds, err := h.seasonService.CreateSeason(season)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
@@ -93,10 +127,6 @@ func (h *SeasonHandler) createSeason(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, models.NewPostSeasonResponse(ds))
-}
-
-func (h *SeasonHandler) updateSeason(c *gin.Context) {
-
 }
 
 // swagger:route DELETE /seasons/{id} Season DeleteSeason
@@ -119,7 +149,7 @@ func (h *SeasonHandler) deleteSeason(c *gin.Context) {
 		return
 	}
 
-	err := h.Repo.DeleteSeason(id)
+	err := h.seasonService.DeleteSeason(id)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
 		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))

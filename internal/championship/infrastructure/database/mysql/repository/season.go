@@ -16,7 +16,7 @@ func NewSeasonMySQLRepo(conn *gorm.DB) *SeasonMySQLRepo {
 	}
 }
 
-func (c SeasonMySQLRepo) GetSeasons(domain.SeasonFilter) (domain.Seasons, error) {
+func (c *SeasonMySQLRepo) GetSeasons(domain.SeasonFilter) (domain.Seasons, error) {
 	var seasons mysql.Seasons
 	tx := c.conn.Model(&mysql.Season{}).Find(&seasons)
 	if tx.Error != nil {
@@ -31,7 +31,7 @@ func (c SeasonMySQLRepo) GetSeasons(domain.SeasonFilter) (domain.Seasons, error)
 	return dss, nil
 }
 
-func (c SeasonMySQLRepo) GetSeason(id string) (domain.Season, error) {
+func (c *SeasonMySQLRepo) GetSeason(id string) (domain.Season, error) {
 	var season mysql.Season
 	tx := c.conn.Where("id = ?", id).First(&season)
 
@@ -50,7 +50,7 @@ func (c SeasonMySQLRepo) GetSeason(id string) (domain.Season, error) {
 	return s, nil
 }
 
-func (c SeasonMySQLRepo) CreateSeason(ds domain.Season) (domain.Season, error) {
+func (c *SeasonMySQLRepo) CreateSeason(ds domain.Season) (domain.Season, error) {
 	season := mysql.NewSeason(ds)
 	tx := c.conn.Create(&season)
 
@@ -66,7 +66,7 @@ func (c SeasonMySQLRepo) CreateSeason(ds domain.Season) (domain.Season, error) {
 	return ds, nil
 }
 
-func (c SeasonMySQLRepo) DeleteSeason(id string) error {
+func (c *SeasonMySQLRepo) DeleteSeason(id string) error {
 	tx := c.conn.Delete(&mysql.Season{}, "id = ?", id)
 	if tx.Error != nil {
 		return tx.Error
