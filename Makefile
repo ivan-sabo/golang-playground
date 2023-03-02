@@ -27,3 +27,14 @@ migrate-drop:
 
 migrate-create:
 	migrate create -ext sql -dir internal/championship/infrastructure/database/migrations/ -seq $(name)
+
+proto-compile:
+	protoc api/grpc/model/*.proto \
+		--go_out=. \
+		--go-grpc_out=. \
+		--go_opt=paths=source_relative \
+		--go-grpc_opt=paths=source_relative \
+		--proto_path=.
+
+test:
+	go test -race -cover ./...

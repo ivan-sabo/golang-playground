@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package model;
+
+option go_package = "github.com/ivan-sabo/api/model";
+
+message Season {
+    string ID = 1;
+    uint32 startYear = 2;
+    uint32 endYear = 3;
+}

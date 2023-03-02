@@ -16,7 +16,8 @@ func NewChampionshipMySQLRepo(conn *gorm.DB) *ChampionshipMySQLRepo {
 	}
 }
 
-func (r ChampionshipMySQLRepo) GetChampionships() (domain.Championships, error) {
+func (r ChampionshipMySQLRepo) GetChampionships(df domain.ChampionshipFilter) (domain.Championships, error) {
+	// @todo: implement filter
 	var championships mysql.Championships
 	tx := r.conn.Model(&mysql.Championship{}).Find(&championships)
 	if tx.Error != nil {

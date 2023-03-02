@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package model;
+
+option go_package = "github.com/ivan-sabo/api/model";
+
+message Championship {
+    string id = 1;
+    string name = 2;
+}
+
+service ChampionshipService {
+    rpc Create(CreateRequest) returns (CreateResponse) {}
+    rpc GetSingle(GetSingleRequest) returns (GetSingleResponse) {}
+    rpc GetList(GetListRequest) returns (GetListResponse) {}
+    rpc Update(UpdateRequest) returns (UpdateResponse) {}
+    rpc Delete(DeleteRequest) returns (DeleteResponse) {}
+}
+
+message CreateRequest {
+    Championship championship = 1;
+}
+
+message CreateResponse {
+    Championship championship = 1;
+}
+
+message GetSingleRequest {
+    string UUID = 1;
+}
+
+message GetSingleResponse {
+    Championship championship = 1;
+}
+
+message GetListRequest {}
+
+message GetListResponse {
+    repeated Championship championships = 1;
+}
+
+message UpdateRequest {
+    Championship championship = 1;
+}
+
+message UpdateResponse {
+    Championship championship = 1;
+}
+
+message DeleteRequest {
+    string UUID = 1;
+}
+
+message DeleteResponse {}

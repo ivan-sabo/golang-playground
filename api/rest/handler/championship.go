@@ -59,7 +59,8 @@ func (gr *ChampionshipHandler) AddChampionshipRoutes() {
 //	responses:
 //		200: GetChampionshipsResponse
 func (gr *ChampionshipHandler) getChampionships(c *gin.Context) {
-	championships, err := gr.ChampionshipRepo.GetChampionships()
+	// @todo: implement filter
+	championships, err := gr.ChampionshipRepo.GetChampionships(domain.ChampionshipFilter{})
 	if err != nil {
 		log.Printf("An error occured: %v", err)
 		return

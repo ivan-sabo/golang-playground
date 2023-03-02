@@ -151,6 +151,10 @@ func (r *Round) removeClub(c Club) {
 	r.Games = games
 }
 
+type ChampionshipFilter struct {
+	Name string
+}
+
 type SeasonFilter struct {
 	StartYear int
 	EndYear   int
@@ -163,7 +167,7 @@ type ChampionshipSeasonFilter struct {
 }
 
 type ChampionshipRepo interface {
-	GetChampionships() (Championships, error)
+	GetChampionships(ChampionshipFilter) (Championships, error)
 	GetChampionship(string) (Championship, error)
 	CreateChampionship(Championship) (Championship, error)
 	UpdateChampionship(string, Championship) (Championship, error)
