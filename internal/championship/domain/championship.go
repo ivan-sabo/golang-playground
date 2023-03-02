@@ -178,11 +178,32 @@ type SeasonRepo interface {
 	GetSeasons(SeasonFilter) (Seasons, error)
 	GetSeason(string) (Season, error)
 	CreateSeason(Season) (Season, error)
-	//UpdateSeason(string, Season) (Season, error)
 	DeleteSeason(string) error
 }
 
 type ChampionshipSeasonRepo interface {
+	RegisterSeason(ChampionshipSeason) (ChampionshipSeason, error)
+	GetChampionshipsSeasons(ChampionshipSeasonFilter) (ChampionshipsSeasons, error)
+}
+
+type ChampionshipService interface {
+	GetChampionships(ChampionshipFilter) (Championships, error)
+	GetChampionship(string) (Championship, error)
+	CreateChampionship(Championship) (Championship, error)
+	UpdateChampionship(string, Championship) (Championship, error)
+	DeleteChampionship(string) error
+	RegisterSeason(string, string) (ChampionshipSeason, error)
+	GetChampionshipsSeasons(ChampionshipSeasonFilter) (ChampionshipsSeasons, error)
+}
+
+type SeasonService interface {
+	GetSeasons(SeasonFilter) (Seasons, error)
+	GetSeason(string) (Season, error)
+	CreateSeason(Season) (Season, error)
+	DeleteSeason(string) error
+}
+
+type ChampionshipSeasonService interface {
 	RegisterSeason(ChampionshipSeason) (ChampionshipSeason, error)
 	GetChampionshipsSeasons(ChampionshipSeasonFilter) (ChampionshipsSeasons, error)
 }

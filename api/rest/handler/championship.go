@@ -16,7 +16,7 @@ import (
 
 type ChampionshipHandler struct {
 	ginEngine           *gin.Engine
-	ChampionshipService service.ChampionshipService
+	ChampionshipService domain.ChampionshipService
 }
 
 func NewChampionshipHandler(ginEngine *gin.Engine, dbConn *gorm.DB) ChampionshipHandler {

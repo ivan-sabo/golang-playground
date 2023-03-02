@@ -14,7 +14,7 @@ import (
 
 type ClubHandler struct {
 	ginEngine   *gin.Engine
-	clubService *service.ClubService
+	clubService domain.ClubService
 }
 
 func NewClubHandler(ginEngine *gin.Engine, dbConn *gorm.DB) ClubHandler {

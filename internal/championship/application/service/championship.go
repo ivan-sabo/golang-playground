@@ -12,8 +12,8 @@ type ChampionshipService struct {
 	seasonRepo             domain.SeasonRepo
 }
 
-func NewChampionshipService(conn *gorm.DB) ChampionshipService {
-	return ChampionshipService{
+func NewChampionshipService(conn *gorm.DB) *ChampionshipService {
+	return &ChampionshipService{
 		championshipRepo:       repository.NewChampionshipMySQLRepo(conn),
 		seasonRepo:             repository.NewSeasonMySQLRepo(conn),
 		championshipSeasonRepo: repository.NewChampionshipSeasonMySQLRepo(conn),

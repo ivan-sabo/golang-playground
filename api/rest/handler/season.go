@@ -14,7 +14,7 @@ import (
 
 type SeasonHandler struct {
 	GinEngine     *gin.Engine
-	seasonService *service.SeasonService
+	seasonService domain.SeasonService
 }
 
 func NewSeasonHandler(g *gin.Engine, conn *gorm.DB) SeasonHandler {

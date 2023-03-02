@@ -44,3 +44,11 @@ type ClubRepo interface {
 	UpdateClub(string, Club) (Club, error)
 	DeleteClub(string) error
 }
+
+type ClubService interface {
+	GetClubs(ClubFilter) (Clubs, error)
+	GetClub(string) (Club, error)
+	CreateClub(Club) (Club, error)
+	UpdateClub(string, Club) (Club, error)
+	DeleteClub(string) error
+}
