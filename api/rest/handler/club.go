@@ -70,13 +70,14 @@ func (ch *ClubHandler) getClubs(c *gin.Context) {
 //
 //	responses:
 //		200: GetClubResponse
+//		400: ErrorResponse
 //		404: ErrorResponse
 //		500: ErrorResponse
 func (ch *ClubHandler) getClub(c *gin.Context) {
 	id, exist := c.Params.Get("id")
 	if !exist {
 		log.Printf("club id was not provided")
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing id parameter")))
+		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
 		return
 	}
 
@@ -152,13 +153,14 @@ func (ch *ClubHandler) postClub(c *gin.Context) {
 //
 //	responses:
 //		200: PutClubResponse
+//		400: ErrorResponse
 //		404: ErrorResponse
 //		500: ErrorResponse
 func (ch *ClubHandler) putClub(c *gin.Context) {
 	id, exist := c.Params.Get("id")
 	if !exist {
 		log.Printf("club id was not provided")
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing id parameter")))
+		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
 		return
 	}
 
@@ -203,12 +205,13 @@ func (ch *ClubHandler) putClub(c *gin.Context) {
 //
 //	responses:
 //		200:
+//		400: ErrorResponse
 //		500: ErrorResponse
 func (ch *ClubHandler) deleteClub(c *gin.Context) {
 	id, exist := c.Params.Get("id")
 	if !exist {
 		log.Printf("club id was not provided")
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing id parameter")))
+		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
 		return
 	}
 

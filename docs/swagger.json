@@ -14,37 +14,6 @@
   "host": "localhost:8080",
   "basePath": "/",
   "paths": {
-    "/championship/{id}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Championship"
-        ],
-        "summary": "Get a single Championship by ID.",
-        "operationId": "getChampionship",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/GetChampionshipResponse"
-          },
-          "404": {
-            "$ref": "#/responses/ErrorResponse"
-          },
-          "500": {
-            "$ref": "#/responses/ErrorResponse"
-          }
-        }
-      }
-    },
     "/championships": {
       "get": {
         "produces": [
@@ -92,6 +61,42 @@
         }
       }
     },
+    "/championships/{championshipID}/seasons": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Championship"
+        ],
+        "summary": "Get filtered ChampionshipsSeasons.",
+        "operationId": "getChampionshipsSeasons",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "championshipID",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "seasonID",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetChampionshipsSeasonsResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      }
+    },
     "/championships/{championshipID}/seasons/{seasonID}": {
       "post": {
         "produces": [
@@ -120,6 +125,9 @@
           "200": {
             "$ref": "#/responses/RegisterSeasonResponse"
           },
+          "400": {
+            "$ref": "#/responses/ErrorResponse"
+          },
           "500": {
             "$ref": "#/responses/ErrorResponse"
           }
@@ -127,6 +135,38 @@
       }
     },
     "/championships/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Championship"
+        ],
+        "summary": "Get a single Championship by ID.",
+        "operationId": "getChampionship",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetChampionshipResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      },
       "put": {
         "consumes": [
           "application/json"
@@ -161,6 +201,9 @@
               "$ref": "#/definitions/PutChampionshipResponse"
             }
           },
+          "400": {
+            "$ref": "#/responses/ErrorResponse"
+          },
           "404": {
             "$ref": "#/responses/ErrorResponse"
           },
@@ -186,6 +229,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "400": {
+            "$ref": "#/responses/ErrorResponse"
           },
           "500": {
             "$ref": "#/responses/ErrorResponse"
@@ -265,6 +311,9 @@
           "200": {
             "$ref": "#/responses/GetClubResponse"
           },
+          "400": {
+            "$ref": "#/responses/ErrorResponse"
+          },
           "404": {
             "$ref": "#/responses/ErrorResponse"
           },
@@ -307,6 +356,9 @@
               "$ref": "#/definitions/PutClubResponse"
             }
           },
+          "400": {
+            "$ref": "#/responses/ErrorResponse"
+          },
           "404": {
             "$ref": "#/responses/ErrorResponse"
           },
@@ -332,6 +384,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "400": {
+            "$ref": "#/responses/ErrorResponse"
           },
           "500": {
             "$ref": "#/responses/ErrorResponse"
@@ -450,6 +505,13 @@
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
     },
+    "ChampionshipsSeasonsDTO": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ChampionshipSeasonDTO"
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
+    },
     "ClubDTO": {
       "type": "object",
       "required": [
@@ -498,6 +560,15 @@
       "properties": {
         "championships": {
           "$ref": "#/definitions/ChampionshipsDTO"
+        }
+      },
+      "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
+    },
+    "GetChampionshipsSeasonsResponse": {
+      "type": "object",
+      "properties": {
+        "ChampionshipsSeasons": {
+          "$ref": "#/definitions/ChampionshipsSeasonsDTO"
         }
       },
       "x-go-package": "_/home/ivan/Work/golang/api/rest/model"
@@ -691,6 +762,12 @@
       "description": "List of championships reponse",
       "schema": {
         "$ref": "#/definitions/GetChampionshipsResponse"
+      }
+    },
+    "GetChampionshipsSeasonsResponse": {
+      "description": "Get ChampionshipsSeasons response",
+      "schema": {
+        "$ref": "#/definitions/GetChampionshipsSeasonsResponse"
       }
     },
     "GetClubResponse": {

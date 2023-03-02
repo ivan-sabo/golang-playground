@@ -17,6 +17,8 @@ func NewRegisterSeasonResponse(cs domain.ChampionshipSeason) ChampionshipSeasonD
 	return NewChampionshipSeason(cs)
 }
 
+type ChampionshipsSeasonsDTO []ChampionshipSeasonDTO
+
 type ChampionshipSeasonDTO struct {
 	Championship ChampionshipDTO
 	Season       SeasonDTO
@@ -27,4 +29,25 @@ func NewChampionshipSeason(dcs domain.ChampionshipSeason) ChampionshipSeasonDTO 
 		Championship: NewChampionshipDTO(dcs.Championship),
 		Season:       NewSeasonDTO(dcs.Season),
 	}
+}
+
+// Get ChampionshipsSeasons response
+// swagger:response GetChampionshipsSeasonsResponse
+type GetChampionshipsSeasonsResponseWrapper struct {
+	// in: body
+	Body GetChampionshipsSeasonsResponse
+}
+
+type GetChampionshipsSeasonsResponse struct {
+	ChampionshipsSeasons ChampionshipsSeasonsDTO
+}
+
+func NewChampionshipsSeasons(dcsss domain.ChampionshipsSeasons) ChampionshipsSeasonsDTO {
+	csss := make(ChampionshipsSeasonsDTO, 0, len(dcsss))
+
+	for _, dcs := range dcsss {
+		csss = append(csss, NewChampionshipSeason(dcs))
+	}
+
+	return csss
 }

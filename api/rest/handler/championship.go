@@ -6,7 +6,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	models "github.com/ivan-sabo/golang-playground/api/rest/model"
+	"github.com/ivan-sabo/golang-playground/internal"
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql/repository"
 	"github.com/ivan-sabo/golang-playground/internal/championship/service"
@@ -33,14 +35,19 @@ func NewChampionshipHandler(ginEngine *gin.Engine, dbConn *gorm.DB) Championship
 
 func (gr *ChampionshipHandler) AddChampionshipRoutes() {
 	c := gr.GinEngine.Group("/championships")
+	{
+		c.GET("", gr.getChampionships)
+		c.GET("/:championshipID", gr.getChampionship)
+		c.POST("", gr.postChampionship)
+		c.PUT("/:championshipID", gr.putChampionship)
+		c.DELETE("/:championshipID", gr.deleteChampionship)
+	}
 
-	c.GET("", gr.getChampionships)
-	c.GET("/:id", gr.getChampionship)
-	c.POST("", gr.postChampionship)
-	c.PUT("/:id", gr.putChampionship)
-	c.DELETE("/:id", gr.deleteChampionship)
-
-	c.POST("/:championshipID/seasons/:seasonID", gr.registerSeason)
+	c = gr.GinEngine.Group("/championships/:championshipID")
+	{
+		c.GET("/seasons", gr.getChampionshipsSeasons)
+		c.POST("/seasons/:seasonID", gr.registerSeason)
+	}
 }
 
 // swagger:route GET /championships Championship getChampionships
@@ -61,7 +68,7 @@ func (gr *ChampionshipHandler) getChampionships(c *gin.Context) {
 	c.JSON(http.StatusOK, models.NewGetChampionshipsResponse(championships))
 }
 
-// swagger:route GET /championship/{id} Championship getChampionship
+// swagger:route GET /championships/{id} Championship getChampionship
 // Get a single Championship by ID.
 //
 //	Produces:
@@ -75,13 +82,14 @@ func (gr *ChampionshipHandler) getChampionships(c *gin.Context) {
 //
 //	responses:
 //		200: GetChampionshipResponse
+//		400: ErrorResponse
 //		404: ErrorResponse
 //		500: ErrorResponse
 func (ch *ChampionshipHandler) getChampionship(c *gin.Context) {
-	id, exist := c.Params.Get("id")
+	id, exist := c.Params.Get("championshipID")
 	if !exist {
 		log.Printf("championship id was not provided")
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing id parameter")))
+		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
 		return
 	}
 
@@ -155,13 +163,14 @@ func (ch *ChampionshipHandler) postChampionship(c *gin.Context) {
 //
 //	responses:
 //		200: PutChampionshipResponse
+//		400: ErrorResponse
 //		404: ErrorResponse
 //		500: ErrorResponse
 func (ch *ChampionshipHandler) putChampionship(c *gin.Context) {
-	id, exist := c.Params.Get("id")
+	id, exist := c.Params.Get("championshipID")
 	if !exist {
 		log.Printf("championship id was not provided")
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing id parameter")))
+		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
 		return
 	}
 
@@ -199,12 +208,13 @@ func (ch *ChampionshipHandler) putChampionship(c *gin.Context) {
 //
 //	responses:
 //		200:
+//		400: ErrorResponse
 //		500: ErrorResponse
 func (ch *ChampionshipHandler) deleteChampionship(c *gin.Context) {
-	id, exist := c.Params.Get("id")
+	id, exist := c.Params.Get("championshipID")
 	if !exist {
 		log.Printf("championship id was not provided")
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing id parameter")))
+		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
 		return
 	}
 
@@ -226,6 +236,7 @@ func (ch *ChampionshipHandler) deleteChampionship(c *gin.Context) {
 //		in: path
 //		required: true
 //		type: string
+//
 //		+ name: seasonID
 //		in: path
 //		required: true
@@ -236,19 +247,20 @@ func (ch *ChampionshipHandler) deleteChampionship(c *gin.Context) {
 //
 //	responses:
 //		200: RegisterSeasonResponse
+//		400: ErrorResponse
 //		500: ErrorResponse
 func (ch *ChampionshipHandler) registerSeason(c *gin.Context) {
 	championshipID, exist := c.Params.Get("championshipID")
 	if !exist {
 		log.Printf("championship id was not provided")
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing championshipID parameter")))
+		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing championshipID parameter")))
 		return
 	}
 
 	seasonID, exist := c.Params.Get("seasonID")
 	if !exist {
 		log.Printf("season id was not provided")
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing seasonID parameter")))
+		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing seasonID parameter")))
 		return
 	}
 
@@ -260,4 +272,62 @@ func (ch *ChampionshipHandler) registerSeason(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, models.NewChampionshipSeason(cs))
+}
+
+// swagger:route GET /championships/{championshipID}/seasons Championship getChampionshipsSeasons
+// Get filtered ChampionshipsSeasons.
+//
+//	Produces:
+//		- application/json
+//
+//	Parameters:
+//		+ name: championshipID
+//		in: path
+//		required: true
+//		type: string
+//
+//		+ name: seasonID
+//		in: query
+//		required: false
+//		type: string
+//
+//	responses:
+//		200: GetChampionshipsSeasonsResponse
+//		400: ErrorResponse
+//		500: ErrorResponse
+func (ch *ChampionshipHandler) getChampionshipsSeasons(c *gin.Context) {
+	csFilter := domain.ChampionshipSeasonFilter{}
+
+	championshipID, exist := c.Params.Get("championshipID")
+	if exist {
+		championshipUUID, err := uuid.Parse(championshipID)
+		if err != nil {
+			log.Printf("an error occured: %v", err)
+			c.JSON(http.StatusBadRequest, models.NewErrorResponse(internal.ErrInvalidUUID))
+			return
+		}
+
+		csFilter.ChampionshipID = championshipUUID.String()
+	}
+
+	seasonID := c.Query("seasonID")
+	if seasonID != "" {
+		seasonUUID, err := uuid.Parse(seasonID)
+		if err != nil {
+			log.Printf("an error occured: %v", err)
+			c.JSON(http.StatusBadRequest, models.NewErrorResponse(internal.ErrInvalidUUID))
+			return
+		}
+
+		csFilter.SeasonID = seasonUUID.String()
+	}
+
+	csss, err := ch.ChampionshipSeasonRepo.GetChampionshipsSeasons(csFilter)
+	if err != nil {
+		log.Printf("an error occured: %v", err)
+		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, models.NewChampionshipsSeasons(csss))
 }
