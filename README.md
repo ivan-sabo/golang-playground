@@ -25,3 +25,4 @@ Here will be a list of features
 - implement gRPC
 - implement authentication and authorization
 - wrap everything in Docker
+- use context

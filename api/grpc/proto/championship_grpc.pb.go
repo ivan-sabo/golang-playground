@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.12.4
-// source: api/grpc/model/championship.proto
+// source: api/grpc/proto/championship.proto
 
-package model
+package proto
 
 import (
 	context "context"
@@ -39,7 +39,7 @@ func NewChampionshipServiceClient(cc grpc.ClientConnInterface) ChampionshipServi
 
 func (c *championshipServiceClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error) {
 	out := new(CreateResponse)
-	err := c.cc.Invoke(ctx, "/model.ChampionshipService/Create", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.ChampionshipService/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (c *championshipServiceClient) Create(ctx context.Context, in *CreateReques
 
 func (c *championshipServiceClient) GetSingle(ctx context.Context, in *GetSingleRequest, opts ...grpc.CallOption) (*GetSingleResponse, error) {
 	out := new(GetSingleResponse)
-	err := c.cc.Invoke(ctx, "/model.ChampionshipService/GetSingle", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.ChampionshipService/GetSingle", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (c *championshipServiceClient) GetSingle(ctx context.Context, in *GetSingle
 
 func (c *championshipServiceClient) GetList(ctx context.Context, in *GetListRequest, opts ...grpc.CallOption) (*GetListResponse, error) {
 	out := new(GetListResponse)
-	err := c.cc.Invoke(ctx, "/model.ChampionshipService/GetList", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.ChampionshipService/GetList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (c *championshipServiceClient) GetList(ctx context.Context, in *GetListRequ
 
 func (c *championshipServiceClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error) {
 	out := new(UpdateResponse)
-	err := c.cc.Invoke(ctx, "/model.ChampionshipService/Update", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.ChampionshipService/Update", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (c *championshipServiceClient) Update(ctx context.Context, in *UpdateReques
 
 func (c *championshipServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
 	out := new(DeleteResponse)
-	err := c.cc.Invoke(ctx, "/model.ChampionshipService/Delete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.ChampionshipService/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +136,7 @@ func _ChampionshipService_Create_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/model.ChampionshipService/Create",
+		FullMethod: "/proto.ChampionshipService/Create",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChampionshipServiceServer).Create(ctx, req.(*CreateRequest))
@@ -154,7 +154,7 @@ func _ChampionshipService_GetSingle_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/model.ChampionshipService/GetSingle",
+		FullMethod: "/proto.ChampionshipService/GetSingle",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChampionshipServiceServer).GetSingle(ctx, req.(*GetSingleRequest))
@@ -172,7 +172,7 @@ func _ChampionshipService_GetList_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/model.ChampionshipService/GetList",
+		FullMethod: "/proto.ChampionshipService/GetList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChampionshipServiceServer).GetList(ctx, req.(*GetListRequest))
@@ -190,7 +190,7 @@ func _ChampionshipService_Update_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/model.ChampionshipService/Update",
+		FullMethod: "/proto.ChampionshipService/Update",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChampionshipServiceServer).Update(ctx, req.(*UpdateRequest))
@@ -208,7 +208,7 @@ func _ChampionshipService_Delete_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/model.ChampionshipService/Delete",
+		FullMethod: "/proto.ChampionshipService/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChampionshipServiceServer).Delete(ctx, req.(*DeleteRequest))
@@ -220,7 +220,7 @@ func _ChampionshipService_Delete_Handler(srv interface{}, ctx context.Context, d
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ChampionshipService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "model.ChampionshipService",
+	ServiceName: "proto.ChampionshipService",
 	HandlerType: (*ChampionshipServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -245,5 +245,5 @@ var ChampionshipService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/grpc/model/championship.proto",
+	Metadata: "api/grpc/proto/championship.proto",
 }

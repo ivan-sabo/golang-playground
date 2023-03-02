@@ -29,7 +29,7 @@ migrate-create:
 	migrate create -ext sql -dir internal/championship/infrastructure/database/migrations/ -seq $(name)
 
 proto-compile:
-	protoc api/grpc/model/*.proto \
+	protoc api/grpc/proto/*.proto \
 		--go_out=. \
 		--go-grpc_out=. \
 		--go_opt=paths=source_relative \

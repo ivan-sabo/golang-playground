@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/ivan-sabo/api/proto";
+
+import "api/grpc/proto/championship.proto";
+import "api/grpc/proto/season.proto";
+
+message ChampionshipSeason {
+    Championship championship = 1;
+    Season season = 2;
+}
