@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql"
 	"gorm.io/gorm"
@@ -16,10 +18,10 @@ func NewChampionshipMySQLRepo(conn *gorm.DB) *ChampionshipMySQLRepo {
 	}
 }
 
-func (r ChampionshipMySQLRepo) GetChampionships(df domain.ChampionshipFilter) (domain.Championships, error) {
+func (r ChampionshipMySQLRepo) GetChampionships(ctx context.Context, df domain.ChampionshipFilter) (domain.Championships, error) {
 	// @todo: implement filter
 	var championships mysql.Championships
-	tx := r.conn.Model(&mysql.Championship{}).Find(&championships)
+	tx := r.conn.WithContext(ctx).Model(&mysql.Championship{}).Find(&championships)
 	if tx.Error != nil {
 		return domain.Championships{}, tx.Error
 	}
@@ -32,9 +34,9 @@ func (r ChampionshipMySQLRepo) GetChampionships(df domain.ChampionshipFilter) (d
 	return dcs, nil
 }
 
-func (r ChampionshipMySQLRepo) GetChampionship(id string) (domain.Championship, error) {
+func (r ChampionshipMySQLRepo) GetChampionship(ctx context.Context, id string) (domain.Championship, error) {
 	var championship mysql.Championship
-	tx := r.conn.Where("id = ?", id).First(&championship)
+	tx := r.conn.WithContext(ctx).Where("id = ?", id).First(&championship)
 
 	if tx.Error == gorm.ErrRecordNotFound {
 		return domain.Championship{}, domain.ErrChampionshipNotFound
@@ -51,9 +53,9 @@ func (r ChampionshipMySQLRepo) GetChampionship(id string) (domain.Championship, 
 	return dc, nil
 }
 
-func (c ChampionshipMySQLRepo) CreateChampionship(dc domain.Championship) (domain.Championship, error) {
+func (c ChampionshipMySQLRepo) CreateChampionship(ctx context.Context, dc domain.Championship) (domain.Championship, error) {
 	championship := mysql.NewChampionship(dc)
-	tx := c.conn.Create(&championship)
+	tx := c.conn.WithContext(ctx).Create(&championship)
 
 	if tx.Error != nil {
 		return domain.Championship{}, tx.Error
@@ -67,9 +69,9 @@ func (c ChampionshipMySQLRepo) CreateChampionship(dc domain.Championship) (domai
 	return dc, nil
 }
 
-func (c ChampionshipMySQLRepo) UpdateChampionship(id string, dc domain.Championship) (domain.Championship, error) {
+func (c ChampionshipMySQLRepo) UpdateChampionship(ctx context.Context, id string, dc domain.Championship) (domain.Championship, error) {
 	var championship mysql.Championship
-	tx := c.conn.Where("id = ?", id).First(&championship)
+	tx := c.conn.WithContext(ctx).Where("id = ?", id).First(&championship)
 
 	if tx.Error == gorm.ErrRecordNotFound {
 		return domain.Championship{}, domain.ErrChampionshipNotFound
@@ -79,7 +81,7 @@ func (c ChampionshipMySQLRepo) UpdateChampionship(id string, dc domain.Champions
 	}
 
 	championship.Name = dc.Name
-	tx = c.conn.Save(&championship)
+	tx.Save(&championship)
 	if tx.Error != nil {
 		return domain.Championship{}, tx.Error
 	}
@@ -92,8 +94,8 @@ func (c ChampionshipMySQLRepo) UpdateChampionship(id string, dc domain.Champions
 	return dc, nil
 }
 
-func (c ChampionshipMySQLRepo) DeleteChampionship(id string) error {
-	tx := c.conn.Delete(&mysql.Championship{}, "id = ?", id)
+func (c ChampionshipMySQLRepo) DeleteChampionship(ctx context.Context, id string) error {
+	tx := c.conn.WithContext(ctx).Delete(&mysql.Championship{}, "id = ?", id)
 	if tx.Error != nil {
 		return tx.Error
 	}

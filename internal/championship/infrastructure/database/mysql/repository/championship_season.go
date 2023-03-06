@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql"
 	"gorm.io/gorm"
@@ -16,9 +18,9 @@ func NewChampionshipSeasonMySQLRepo(conn *gorm.DB) *championshipSeasonMySQLRepo 
 	}
 }
 
-func (r *championshipSeasonMySQLRepo) RegisterSeason(ds domain.ChampionshipSeason) (domain.ChampionshipSeason, error) {
+func (r *championshipSeasonMySQLRepo) RegisterSeason(ctx context.Context, ds domain.ChampionshipSeason) (domain.ChampionshipSeason, error) {
 	var championship mysql.Championship
-	tx := r.conn.Where("id = ?", ds.Championship.ID.String()).First(&championship)
+	tx := r.conn.WithContext(ctx).Where("id = ?", ds.Championship.ID.String()).First(&championship)
 	if tx.Error == gorm.ErrRecordNotFound {
 		return domain.ChampionshipSeason{}, domain.ErrChampionshipNotFound
 	}
@@ -27,7 +29,7 @@ func (r *championshipSeasonMySQLRepo) RegisterSeason(ds domain.ChampionshipSeaso
 	}
 
 	var season mysql.Season
-	tx = r.conn.Where("id = ?", ds.Season.ID.String()).First(&season)
+	tx.Where("id = ?", ds.Season.ID.String()).First(&season)
 	if tx.Error == gorm.ErrRecordNotFound {
 		return domain.ChampionshipSeason{}, domain.ErrSeasonNotFound
 	}
@@ -36,7 +38,7 @@ func (r *championshipSeasonMySQLRepo) RegisterSeason(ds domain.ChampionshipSeaso
 	}
 
 	var championshipsSeasons mysql.ChampionshipsSeasons
-	tx = r.conn.Where(
+	tx.Where(
 		"championship_id = ? AND season_id = ?",
 		ds.Championship.ID.String(),
 		ds.Season.ID.String(),
@@ -49,7 +51,7 @@ func (r *championshipSeasonMySQLRepo) RegisterSeason(ds domain.ChampionshipSeaso
 	}
 
 	championshipSeason := mysql.NewChampionshipSeason(ds.Championship, ds.Season)
-	tx = r.conn.Create(&championshipSeason)
+	tx.Create(&championshipSeason)
 	if tx.Error != nil {
 		return domain.ChampionshipSeason{}, tx.Error
 	}
@@ -69,7 +71,7 @@ func (r *championshipSeasonMySQLRepo) RegisterSeason(ds domain.ChampionshipSeaso
 	}, nil
 }
 
-func (r *championshipSeasonMySQLRepo) GetChampionshipsSeasons(csf domain.ChampionshipSeasonFilter) (domain.ChampionshipsSeasons, error) {
+func (r *championshipSeasonMySQLRepo) GetChampionshipsSeasons(ctx context.Context, csf domain.ChampionshipSeasonFilter) (domain.ChampionshipsSeasons, error) {
 	var championshipsSeasons mysql.ChampionshipsSeasons
 
 	q := make(map[string]interface{})
@@ -79,7 +81,7 @@ func (r *championshipSeasonMySQLRepo) GetChampionshipsSeasons(csf domain.Champio
 	if csf.SeasonID != "" {
 		q["season_id"] = csf.SeasonID
 	}
-	tx := r.conn.Where(q).Find(&championshipsSeasons)
+	tx := r.conn.WithContext(ctx).Where(q).Find(&championshipsSeasons)
 	if tx.Error != nil {
 		return domain.ChampionshipsSeasons{}, tx.Error
 	}
@@ -88,13 +90,13 @@ func (r *championshipSeasonMySQLRepo) GetChampionshipsSeasons(csf domain.Champio
 
 	// @todo: use eager loading to reduce number of queries
 	var championships mysql.Championships
-	tx = r.conn.Where("id IN ?", csIDs).Find(&championships)
+	tx.Where("id IN ?", csIDs).Find(&championships)
 	if tx.Error != nil {
 		return domain.ChampionshipsSeasons{}, tx.Error
 	}
 
 	var seasons mysql.Seasons
-	tx = r.conn.Where("id IN ?", ssIDs).Find(&seasons)
+	tx.Where("id IN ?", ssIDs).Find(&seasons)
 	if tx.Error != nil {
 		return domain.ChampionshipsSeasons{}, tx.Error
 	}

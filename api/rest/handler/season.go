@@ -41,15 +41,15 @@ func (h *SeasonHandler) AddSeasonRoutes() {
 //
 //	responses:
 //		200: GetSeasonsResponse
-func (h *SeasonHandler) getSeasons(c *gin.Context) {
-	seasons, err := h.seasonService.GetSeasons(domain.SeasonFilter{})
+func (h *SeasonHandler) getSeasons(ctx *gin.Context) {
+	seasons, err := h.seasonService.GetSeasons(ctx, domain.SeasonFilter{})
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusNotFound, models.NewErrorResponse(err))
 		return
 	}
 
-	c.JSON(http.StatusOK, models.NewGetSeasonsResponse(seasons))
+	ctx.JSON(http.StatusOK, models.NewGetSeasonsResponse(seasons))
 }
 
 // swagger:route GET /seasons/{id} Season getSeason
@@ -69,26 +69,26 @@ func (h *SeasonHandler) getSeasons(c *gin.Context) {
 //		400: ErrorResponse
 //		404: ErrorResponse
 //		500: ErrorResponse
-func (h *SeasonHandler) getSeason(c *gin.Context) {
-	id, exist := c.Params.Get("id")
+func (h *SeasonHandler) getSeason(ctx *gin.Context) {
+	id, exist := ctx.Params.Get("id")
 	if !exist {
 		log.Printf("season id was not provided")
-		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
+		ctx.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
 		return
 	}
-	season, err := h.seasonService.GetSeason(id)
+	season, err := h.seasonService.GetSeason(ctx, id)
 	if err == domain.ErrSeasonNotFound {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusNotFound, models.NewErrorResponse(err))
 		return
 	}
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusNotFound, models.NewErrorResponse(err))
 		return
 	}
 
-	c.JSON(http.StatusOK, models.NewGetSeasonResponse(season))
+	ctx.JSON(http.StatusOK, models.NewGetSeasonResponse(season))
 }
 
 // swagger:route POST /seasons Season CreateSeason
@@ -103,30 +103,30 @@ func (h *SeasonHandler) getSeason(c *gin.Context) {
 //	responses:
 //		200: PostSeasonResponse
 //		500: ErrorResponse
-func (h *SeasonHandler) createSeason(c *gin.Context) {
+func (h *SeasonHandler) createSeason(ctx *gin.Context) {
 	var sr models.PostSeasonRequest
-	err := c.ShouldBindJSON(&sr)
+	err := ctx.ShouldBindJSON(&sr)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
 	season, err := sr.ToEntity()
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	ds, err := h.seasonService.CreateSeason(season)
+	ds, err := h.seasonService.CreateSeason(ctx, season)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	c.JSON(http.StatusCreated, models.NewPostSeasonResponse(ds))
+	ctx.JSON(http.StatusCreated, models.NewPostSeasonResponse(ds))
 }
 
 // swagger:route DELETE /seasons/{id} Season DeleteSeason
@@ -141,20 +141,20 @@ func (h *SeasonHandler) createSeason(c *gin.Context) {
 //	responses:
 //		200:
 //		500: ErrorResponse
-func (h *SeasonHandler) deleteSeason(c *gin.Context) {
-	id, exist := c.Params.Get("id")
+func (h *SeasonHandler) deleteSeason(ctx *gin.Context) {
+	id, exist := ctx.Params.Get("id")
 	if !exist {
 		log.Printf("season id was not provided")
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing id parameter")))
+		ctx.JSON(http.StatusNotFound, models.NewErrorResponse(errors.New("missing id parameter")))
 		return
 	}
 
-	err := h.seasonService.DeleteSeason(id)
+	err := h.seasonService.DeleteSeason(ctx, id)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	c.Status(http.StatusOK)
+	ctx.Status(http.StatusOK)
 }

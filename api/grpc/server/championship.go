@@ -32,7 +32,7 @@ func (s *championshipServer) Create(ctx context.Context, req *proto.CreateReques
 		return nil, err
 	}
 
-	c, err := s.championshipService.CreateChampionship(newChampionship)
+	c, err := s.championshipService.CreateChampionship(ctx, newChampionship)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (s *championshipServer) Create(ctx context.Context, req *proto.CreateReques
 }
 
 func (s *championshipServer) GetSingle(ctx context.Context, req *proto.GetSingleRequest) (*proto.GetSingleResponse, error) {
-	c, err := s.championshipService.GetChampionship(req.GetUUID())
+	c, err := s.championshipService.GetChampionship(ctx, req.GetUUID())
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func (s *championshipServer) GetSingle(ctx context.Context, req *proto.GetSingle
 
 func (s *championshipServer) GetList(ctx context.Context, req *proto.GetListRequest) (*proto.GetListResponse, error) {
 	// @todo: implement filter
-	dcs, err := s.championshipService.GetChampionships(domain.ChampionshipFilter{})
+	dcs, err := s.championshipService.GetChampionships(ctx, domain.ChampionshipFilter{})
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +79,7 @@ func (s *championshipServer) Update(ctx context.Context, req *proto.UpdateReques
 		return nil, err
 	}
 
-	r, err := s.championshipService.UpdateChampionship(dc.ID.String(), dc)
+	r, err := s.championshipService.UpdateChampionship(ctx, dc.ID.String(), dc)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +90,7 @@ func (s *championshipServer) Update(ctx context.Context, req *proto.UpdateReques
 }
 
 func (s *championshipServer) Delete(ctx context.Context, req *proto.DeleteRequest) (*proto.DeleteResponse, error) {
-	err := s.championshipService.DeleteChampionship(req.UUID)
+	err := s.championshipService.DeleteChampionship(ctx, req.UUID)
 	if err != nil {
 		return nil, err
 	}

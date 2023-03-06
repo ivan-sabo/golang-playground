@@ -42,15 +42,15 @@ func (ch *ClubHandler) AddClubRoutes() {
 //
 //	responses:
 //		200: GetClubsResponse
-func (ch *ClubHandler) getClubs(c *gin.Context) {
-	clubs, err := ch.clubService.GetClubs(domain.ClubFilter{})
+func (ch *ClubHandler) getClubs(ctx *gin.Context) {
+	clubs, err := ch.clubService.GetClubs(ctx, domain.ClubFilter{})
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusNotFound, models.NewErrorResponse(err))
 		return
 	}
 
-	c.JSON(http.StatusOK, models.NewGetClubsResponse(clubs))
+	ctx.JSON(http.StatusOK, models.NewGetClubsResponse(clubs))
 }
 
 // swagger:route GET /clubs/{id} Club getClub
@@ -73,27 +73,27 @@ func (ch *ClubHandler) getClubs(c *gin.Context) {
 //		400: ErrorResponse
 //		404: ErrorResponse
 //		500: ErrorResponse
-func (ch *ClubHandler) getClub(c *gin.Context) {
-	id, exist := c.Params.Get("id")
+func (ch *ClubHandler) getClub(ctx *gin.Context) {
+	id, exist := ctx.Params.Get("id")
 	if !exist {
 		log.Printf("club id was not provided")
-		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
+		ctx.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
 		return
 	}
 
-	club, err := ch.clubService.GetClub(id)
+	club, err := ch.clubService.GetClub(ctx, id)
 	if err == domain.ErrClubNotFound {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusNotFound, models.NewErrorResponse(err))
 		return
 	}
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	c.JSON(http.StatusOK, models.GetClubResponse{
+	ctx.JSON(http.StatusOK, models.GetClubResponse{
 		Club: models.NewClubDTO(club),
 	})
 }
@@ -110,30 +110,30 @@ func (ch *ClubHandler) getClub(c *gin.Context) {
 //	responses:
 //		200: PostClubResponse
 //		500: ErrorResponse
-func (ch *ClubHandler) postClub(c *gin.Context) {
+func (ch *ClubHandler) postClub(ctx *gin.Context) {
 	var cr models.PostClubRequest
-	err := c.ShouldBindJSON(&cr)
+	err := ctx.ShouldBindJSON(&cr)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
 	club, err := cr.ToEntity()
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	dc, err := ch.clubService.CreateClub(club)
+	dc, err := ch.clubService.CreateClub(ctx, club)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	c.JSON(http.StatusCreated, models.NewPostClubResponse(dc))
+	ctx.JSON(http.StatusCreated, models.NewPostClubResponse(dc))
 }
 
 // swagger:route PUT /clubs/{id} Club UpdateClub
@@ -156,42 +156,42 @@ func (ch *ClubHandler) postClub(c *gin.Context) {
 //		400: ErrorResponse
 //		404: ErrorResponse
 //		500: ErrorResponse
-func (ch *ClubHandler) putClub(c *gin.Context) {
-	id, exist := c.Params.Get("id")
+func (ch *ClubHandler) putClub(ctx *gin.Context) {
+	id, exist := ctx.Params.Get("id")
 	if !exist {
 		log.Printf("club id was not provided")
-		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
+		ctx.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
 		return
 	}
 
-	_, err := ch.clubService.GetClub(id)
+	_, err := ch.clubService.GetClub(ctx, id)
 	if err == domain.ErrClubNotFound {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusNotFound, models.NewErrorResponse(err))
 		return
 	}
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
 	var club models.PutClubRequest
-	err = c.ShouldBindJSON(&club)
+	err = ctx.ShouldBindJSON(&club)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	dc, err := ch.clubService.UpdateClub(id, club.ToEntity())
+	dc, err := ch.clubService.UpdateClub(ctx, id, club.ToEntity())
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	c.JSON(http.StatusOK, models.NewPutClubResponse(dc))
+	ctx.JSON(http.StatusOK, models.NewPutClubResponse(dc))
 }
 
 // swagger:route DELETE /clubs/{id} Club DeleteClub
@@ -207,20 +207,20 @@ func (ch *ClubHandler) putClub(c *gin.Context) {
 //		200:
 //		400: ErrorResponse
 //		500: ErrorResponse
-func (ch *ClubHandler) deleteClub(c *gin.Context) {
-	id, exist := c.Params.Get("id")
+func (ch *ClubHandler) deleteClub(ctx *gin.Context) {
+	id, exist := ctx.Params.Get("id")
 	if !exist {
 		log.Printf("club id was not provided")
-		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
+		ctx.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
 		return
 	}
 
-	err := ch.clubService.DeleteClub(id)
+	err := ch.clubService.DeleteClub(ctx, id)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	c.Status(http.StatusOK)
+	ctx.Status(http.StatusOK)
 }

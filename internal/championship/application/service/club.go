@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql/repository"
 	"gorm.io/gorm"
@@ -16,8 +18,8 @@ func NewClubService(conn *gorm.DB) *ClubService {
 	}
 }
 
-func (s *ClubService) GetClubs(f domain.ClubFilter) (domain.Clubs, error) {
-	c, err := s.clubRepo.GetClubs(f)
+func (s *ClubService) GetClubs(ctx context.Context, f domain.ClubFilter) (domain.Clubs, error) {
+	c, err := s.clubRepo.GetClubs(ctx, f)
 	if err != nil {
 		return nil, err
 	}
@@ -25,8 +27,8 @@ func (s *ClubService) GetClubs(f domain.ClubFilter) (domain.Clubs, error) {
 	return c, nil
 }
 
-func (s *ClubService) GetClub(id string) (domain.Club, error) {
-	c, err := s.clubRepo.GetClub(id)
+func (s *ClubService) GetClub(ctx context.Context, id string) (domain.Club, error) {
+	c, err := s.clubRepo.GetClub(ctx, id)
 	if err != nil {
 		return domain.Club{}, err
 	}
@@ -34,8 +36,8 @@ func (s *ClubService) GetClub(id string) (domain.Club, error) {
 	return c, nil
 }
 
-func (s *ClubService) CreateClub(c domain.Club) (domain.Club, error) {
-	c, err := s.clubRepo.CreateClub(c)
+func (s *ClubService) CreateClub(ctx context.Context, c domain.Club) (domain.Club, error) {
+	c, err := s.clubRepo.CreateClub(ctx, c)
 	if err != nil {
 		return domain.Club{}, err
 	}
@@ -43,8 +45,8 @@ func (s *ClubService) CreateClub(c domain.Club) (domain.Club, error) {
 	return c, nil
 }
 
-func (s *ClubService) UpdateClub(id string, c domain.Club) (domain.Club, error) {
-	c, err := s.clubRepo.UpdateClub(id, c)
+func (s *ClubService) UpdateClub(ctx context.Context, id string, c domain.Club) (domain.Club, error) {
+	c, err := s.clubRepo.UpdateClub(ctx, id, c)
 	if err != nil {
 		return domain.Club{}, err
 	}
@@ -52,8 +54,8 @@ func (s *ClubService) UpdateClub(id string, c domain.Club) (domain.Club, error) 
 	return c, nil
 }
 
-func (s *ClubService) DeleteClub(id string) error {
-	err := s.clubRepo.DeleteClub(id)
+func (s *ClubService) DeleteClub(ctx context.Context, id string) error {
+	err := s.clubRepo.DeleteClub(ctx, id)
 	if err != nil {
 		return err
 	}

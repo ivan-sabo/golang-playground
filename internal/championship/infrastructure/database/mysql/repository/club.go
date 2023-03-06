@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql"
 	"gorm.io/gorm"
@@ -16,9 +18,10 @@ func NewClubMySQLRepo(conn *gorm.DB) *ClubMySQLRepo {
 	}
 }
 
-func (c ClubMySQLRepo) GetClubs(domain.ClubFilter) (domain.Clubs, error) {
+func (c ClubMySQLRepo) GetClubs(ctx context.Context, f domain.ClubFilter) (domain.Clubs, error) {
+	// @todo: use filter
 	var clubs mysql.Clubs
-	tx := c.conn.Model(&mysql.Club{}).Find(&clubs)
+	tx := c.conn.WithContext(ctx).Model(&mysql.Club{}).Find(&clubs)
 	if tx.Error != nil {
 		return domain.Clubs{}, tx.Error
 	}
@@ -31,9 +34,9 @@ func (c ClubMySQLRepo) GetClubs(domain.ClubFilter) (domain.Clubs, error) {
 	return dcs, nil
 }
 
-func (c ClubMySQLRepo) GetClub(id string) (domain.Club, error) {
+func (c ClubMySQLRepo) GetClub(ctx context.Context, id string) (domain.Club, error) {
 	var club mysql.Club
-	tx := c.conn.Where("id = ?", id).First(&club)
+	tx := c.conn.WithContext(ctx).Where("id = ?", id).First(&club)
 
 	if tx.Error == gorm.ErrRecordNotFound {
 		return domain.Club{}, domain.ErrClubNotFound
@@ -50,9 +53,9 @@ func (c ClubMySQLRepo) GetClub(id string) (domain.Club, error) {
 	return sc, nil
 }
 
-func (c ClubMySQLRepo) CreateClub(dc domain.Club) (domain.Club, error) {
+func (c ClubMySQLRepo) CreateClub(ctx context.Context, dc domain.Club) (domain.Club, error) {
 	club := mysql.NewClub(dc)
-	tx := c.conn.Create(&club)
+	tx := c.conn.WithContext(ctx).Create(&club)
 
 	if tx.Error != nil {
 		return domain.Club{}, tx.Error
@@ -66,9 +69,9 @@ func (c ClubMySQLRepo) CreateClub(dc domain.Club) (domain.Club, error) {
 	return dc, nil
 }
 
-func (c ClubMySQLRepo) UpdateClub(id string, dc domain.Club) (domain.Club, error) {
+func (c ClubMySQLRepo) UpdateClub(ctx context.Context, id string, dc domain.Club) (domain.Club, error) {
 	var club mysql.Club
-	tx := c.conn.Where("id = ?", id).First(&club)
+	tx := c.conn.WithContext(ctx).Where("id = ?", id).First(&club)
 
 	if tx.Error == gorm.ErrRecordNotFound {
 		return domain.Club{}, domain.ErrClubNotFound
@@ -78,7 +81,7 @@ func (c ClubMySQLRepo) UpdateClub(id string, dc domain.Club) (domain.Club, error
 	}
 
 	club.Name = dc.Name
-	tx = c.conn.Save(&club)
+	tx.Save(&club)
 	if tx.Error != nil {
 		return domain.Club{}, tx.Error
 	}
@@ -91,8 +94,8 @@ func (c ClubMySQLRepo) UpdateClub(id string, dc domain.Club) (domain.Club, error
 	return dc, nil
 }
 
-func (c ClubMySQLRepo) DeleteClub(id string) error {
-	tx := c.conn.Delete(&mysql.Club{}, "id = ?", id)
+func (c ClubMySQLRepo) DeleteClub(ctx context.Context, id string) error {
+	tx := c.conn.WithContext(ctx).Delete(&mysql.Club{}, "id = ?", id)
 	if tx.Error != nil {
 		return tx.Error
 	}

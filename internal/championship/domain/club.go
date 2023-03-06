@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"context"
 	"time"
 
 	"github.com/google/uuid"
@@ -38,17 +39,17 @@ type ClubFilter struct {
 }
 
 type ClubRepo interface {
-	GetClubs(ClubFilter) (Clubs, error)
-	GetClub(string) (Club, error)
-	CreateClub(Club) (Club, error)
-	UpdateClub(string, Club) (Club, error)
-	DeleteClub(string) error
+	GetClubs(context.Context, ClubFilter) (Clubs, error)
+	GetClub(context.Context, string) (Club, error)
+	CreateClub(context.Context, Club) (Club, error)
+	UpdateClub(context.Context, string, Club) (Club, error)
+	DeleteClub(context.Context, string) error
 }
 
 type ClubService interface {
-	GetClubs(ClubFilter) (Clubs, error)
-	GetClub(string) (Club, error)
-	CreateClub(Club) (Club, error)
-	UpdateClub(string, Club) (Club, error)
-	DeleteClub(string) error
+	GetClubs(context.Context, ClubFilter) (Clubs, error)
+	GetClub(context.Context, string) (Club, error)
+	CreateClub(context.Context, Club) (Club, error)
+	UpdateClub(context.Context, string, Club) (Club, error)
+	DeleteClub(context.Context, string) error
 }

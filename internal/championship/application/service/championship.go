@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql/repository"
 	"gorm.io/gorm"
@@ -20,13 +22,13 @@ func NewChampionshipService(conn *gorm.DB) *ChampionshipService {
 	}
 }
 
-func (cs *ChampionshipService) UpdateChampionship(id string, c domain.Championship) (domain.Championship, error) {
-	_, err := cs.championshipRepo.GetChampionship(id)
+func (cs *ChampionshipService) UpdateChampionship(ctx context.Context, id string, c domain.Championship) (domain.Championship, error) {
+	_, err := cs.championshipRepo.GetChampionship(ctx, id)
 	if err != nil {
 		return domain.Championship{}, err
 	}
 
-	dc, err := cs.championshipRepo.UpdateChampionship(id, c)
+	dc, err := cs.championshipRepo.UpdateChampionship(ctx, id, c)
 	if err != nil {
 		return domain.Championship{}, err
 	}
@@ -34,19 +36,19 @@ func (cs *ChampionshipService) UpdateChampionship(id string, c domain.Championsh
 	return dc, nil
 }
 
-func (cs *ChampionshipService) RegisterSeason(championshipID string, seasonID string) (domain.ChampionshipSeason, error) {
-	championship, err := cs.championshipRepo.GetChampionship(championshipID)
+func (cs *ChampionshipService) RegisterSeason(ctx context.Context, championshipID string, seasonID string) (domain.ChampionshipSeason, error) {
+	championship, err := cs.championshipRepo.GetChampionship(ctx, championshipID)
 	if err != nil {
 		return domain.ChampionshipSeason{}, err
 	}
 
-	season, err := cs.seasonRepo.GetSeason(seasonID)
+	season, err := cs.seasonRepo.GetSeason(ctx, seasonID)
 	if err != nil {
 		return domain.ChampionshipSeason{}, err
 	}
 
 	ncs := championship.RegisterSeason(season)
-	dcs, err := cs.championshipSeasonRepo.RegisterSeason(ncs)
+	dcs, err := cs.championshipSeasonRepo.RegisterSeason(ctx, ncs)
 	if err != nil {
 		return domain.ChampionshipSeason{}, err
 	}
@@ -54,8 +56,8 @@ func (cs *ChampionshipService) RegisterSeason(championshipID string, seasonID st
 	return dcs, nil
 }
 
-func (cs *ChampionshipService) GetChampionships(f domain.ChampionshipFilter) (domain.Championships, error) {
-	c, err := cs.championshipRepo.GetChampionships(f)
+func (cs *ChampionshipService) GetChampionships(ctx context.Context, f domain.ChampionshipFilter) (domain.Championships, error) {
+	c, err := cs.championshipRepo.GetChampionships(ctx, f)
 	if err != nil {
 		return domain.Championships{}, err
 	}
@@ -63,8 +65,8 @@ func (cs *ChampionshipService) GetChampionships(f domain.ChampionshipFilter) (do
 	return c, nil
 }
 
-func (cs *ChampionshipService) GetChampionship(id string) (domain.Championship, error) {
-	c, err := cs.championshipRepo.GetChampionship(id)
+func (cs *ChampionshipService) GetChampionship(ctx context.Context, id string) (domain.Championship, error) {
+	c, err := cs.championshipRepo.GetChampionship(ctx, id)
 	if err != nil {
 		return domain.Championship{}, err
 	}
@@ -72,8 +74,8 @@ func (cs *ChampionshipService) GetChampionship(id string) (domain.Championship, 
 	return c, nil
 }
 
-func (cs *ChampionshipService) CreateChampionship(c domain.Championship) (domain.Championship, error) {
-	c, err := cs.championshipRepo.CreateChampionship(c)
+func (cs *ChampionshipService) CreateChampionship(ctx context.Context, c domain.Championship) (domain.Championship, error) {
+	c, err := cs.championshipRepo.CreateChampionship(ctx, c)
 	if err != nil {
 		return domain.Championship{}, err
 	}
@@ -81,8 +83,8 @@ func (cs *ChampionshipService) CreateChampionship(c domain.Championship) (domain
 	return c, nil
 }
 
-func (cs *ChampionshipService) DeleteChampionship(id string) error {
-	err := cs.championshipRepo.DeleteChampionship(id)
+func (cs *ChampionshipService) DeleteChampionship(ctx context.Context, id string) error {
+	err := cs.championshipRepo.DeleteChampionship(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -90,8 +92,8 @@ func (cs *ChampionshipService) DeleteChampionship(id string) error {
 	return nil
 }
 
-func (cs *ChampionshipService) GetChampionshipsSeasons(f domain.ChampionshipSeasonFilter) (domain.ChampionshipsSeasons, error) {
-	c, err := cs.championshipSeasonRepo.GetChampionshipsSeasons(f)
+func (cs *ChampionshipService) GetChampionshipsSeasons(ctx context.Context, f domain.ChampionshipSeasonFilter) (domain.ChampionshipsSeasons, error) {
+	c, err := cs.championshipSeasonRepo.GetChampionshipsSeasons(ctx, f)
 	if err != nil {
 		return domain.ChampionshipsSeasons{}, err
 	}

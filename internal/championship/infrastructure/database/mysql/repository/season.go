@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/ivan-sabo/golang-playground/internal/championship/domain"
 	"github.com/ivan-sabo/golang-playground/internal/championship/infrastructure/database/mysql"
 	"gorm.io/gorm"
@@ -16,9 +18,9 @@ func NewSeasonMySQLRepo(conn *gorm.DB) *SeasonMySQLRepo {
 	}
 }
 
-func (c *SeasonMySQLRepo) GetSeasons(domain.SeasonFilter) (domain.Seasons, error) {
+func (c *SeasonMySQLRepo) GetSeasons(ctx context.Context, f domain.SeasonFilter) (domain.Seasons, error) {
 	var seasons mysql.Seasons
-	tx := c.conn.Model(&mysql.Season{}).Find(&seasons)
+	tx := c.conn.WithContext(ctx).Model(&mysql.Season{}).Find(&seasons)
 	if tx.Error != nil {
 		return domain.Seasons{}, tx.Error
 	}
@@ -31,9 +33,9 @@ func (c *SeasonMySQLRepo) GetSeasons(domain.SeasonFilter) (domain.Seasons, error
 	return dss, nil
 }
 
-func (c *SeasonMySQLRepo) GetSeason(id string) (domain.Season, error) {
+func (c *SeasonMySQLRepo) GetSeason(ctx context.Context, id string) (domain.Season, error) {
 	var season mysql.Season
-	tx := c.conn.Where("id = ?", id).First(&season)
+	tx := c.conn.WithContext(ctx).Where("id = ?", id).First(&season)
 
 	if tx.Error == gorm.ErrRecordNotFound {
 		return domain.Season{}, domain.ErrSeasonNotFound
@@ -50,9 +52,9 @@ func (c *SeasonMySQLRepo) GetSeason(id string) (domain.Season, error) {
 	return s, nil
 }
 
-func (c *SeasonMySQLRepo) CreateSeason(ds domain.Season) (domain.Season, error) {
+func (c *SeasonMySQLRepo) CreateSeason(ctx context.Context, ds domain.Season) (domain.Season, error) {
 	season := mysql.NewSeason(ds)
-	tx := c.conn.Create(&season)
+	tx := c.conn.WithContext(ctx).Create(&season)
 
 	if tx.Error != nil {
 		return domain.Season{}, tx.Error
@@ -66,8 +68,8 @@ func (c *SeasonMySQLRepo) CreateSeason(ds domain.Season) (domain.Season, error) 
 	return ds, nil
 }
 
-func (c *SeasonMySQLRepo) DeleteSeason(id string) error {
-	tx := c.conn.Delete(&mysql.Season{}, "id = ?", id)
+func (c *SeasonMySQLRepo) DeleteSeason(ctx context.Context, id string) error {
+	tx := c.conn.WithContext(ctx).Delete(&mysql.Season{}, "id = ?", id)
 	if tx.Error != nil {
 		return tx.Error
 	}

@@ -51,15 +51,15 @@ func (gr *ChampionshipHandler) AddChampionshipRoutes() {
 //
 //	responses:
 //		200: GetChampionshipsResponse
-func (gr *ChampionshipHandler) getChampionships(c *gin.Context) {
+func (gr *ChampionshipHandler) getChampionships(ctx *gin.Context) {
 	// @todo: implement filter
-	championships, err := gr.ChampionshipService.GetChampionships(domain.ChampionshipFilter{})
+	championships, err := gr.ChampionshipService.GetChampionships(ctx, domain.ChampionshipFilter{})
 	if err != nil {
 		log.Printf("An error occured: %v", err)
 		return
 	}
 
-	c.JSON(http.StatusOK, models.NewGetChampionshipsResponse(championships))
+	ctx.JSON(http.StatusOK, models.NewGetChampionshipsResponse(championships))
 }
 
 // swagger:route GET /championships/{id} Championship getChampionship
@@ -79,27 +79,27 @@ func (gr *ChampionshipHandler) getChampionships(c *gin.Context) {
 //		400: ErrorResponse
 //		404: ErrorResponse
 //		500: ErrorResponse
-func (ch *ChampionshipHandler) getChampionship(c *gin.Context) {
-	id, exist := c.Params.Get("championshipID")
+func (ch *ChampionshipHandler) getChampionship(ctx *gin.Context) {
+	id, exist := ctx.Params.Get("championshipID")
 	if !exist {
 		log.Printf("championship id was not provided")
-		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
+		ctx.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
 		return
 	}
 
-	championship, err := ch.ChampionshipService.GetChampionship(id)
+	championship, err := ch.ChampionshipService.GetChampionship(ctx, id)
 	if err == domain.ErrChampionshipNotFound {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusNotFound, models.NewErrorResponse(err))
 		return
 	}
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	c.JSON(http.StatusOK, models.NewGetChampionshipResponse(championship))
+	ctx.JSON(http.StatusOK, models.NewGetChampionshipResponse(championship))
 }
 
 // swagger:route POST /championships Championship CreateChampionship
@@ -114,30 +114,30 @@ func (ch *ChampionshipHandler) getChampionship(c *gin.Context) {
 //	responses:
 //		200: PostChampionshipResponse
 //		500: ErrorResponse
-func (ch *ChampionshipHandler) postChampionship(c *gin.Context) {
+func (ch *ChampionshipHandler) postChampionship(ctx *gin.Context) {
 	var cr models.PostChampionshipRequest
-	err := c.ShouldBindJSON(&cr)
+	err := ctx.ShouldBindJSON(&cr)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
 	championship, err := cr.ToEntity()
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	dc, err := ch.ChampionshipService.CreateChampionship(championship)
+	dc, err := ch.ChampionshipService.CreateChampionship(ctx, championship)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	c.JSON(http.StatusCreated, models.NewPostChampionshipResponse(dc))
+	ctx.JSON(http.StatusCreated, models.NewPostChampionshipResponse(dc))
 }
 
 // swagger:route PUT /championships/{id} Championship UpdateChampionship
@@ -160,35 +160,35 @@ func (ch *ChampionshipHandler) postChampionship(c *gin.Context) {
 //		400: ErrorResponse
 //		404: ErrorResponse
 //		500: ErrorResponse
-func (ch *ChampionshipHandler) putChampionship(c *gin.Context) {
-	id, exist := c.Params.Get("championshipID")
+func (ch *ChampionshipHandler) putChampionship(ctx *gin.Context) {
+	id, exist := ctx.Params.Get("championshipID")
 	if !exist {
 		log.Printf("championship id was not provided")
-		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
+		ctx.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
 		return
 	}
 
 	var championship models.PutChampionshipRequest
-	err := c.ShouldBindJSON(&championship)
+	err := ctx.ShouldBindJSON(&championship)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	dc, err := ch.ChampionshipService.UpdateChampionship(id, championship.ToEntity())
+	dc, err := ch.ChampionshipService.UpdateChampionship(ctx, id, championship.ToEntity())
 	if err == domain.ErrChampionshipNotFound {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusNotFound, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusNotFound, models.NewErrorResponse(err))
 		return
 	}
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	c.JSON(http.StatusOK, models.NewPutChampionshipResponse(dc))
+	ctx.JSON(http.StatusOK, models.NewPutChampionshipResponse(dc))
 }
 
 // swagger:route DELETE /championships/{id} Championship DeleteChampionship
@@ -204,22 +204,22 @@ func (ch *ChampionshipHandler) putChampionship(c *gin.Context) {
 //		200:
 //		400: ErrorResponse
 //		500: ErrorResponse
-func (ch *ChampionshipHandler) deleteChampionship(c *gin.Context) {
-	id, exist := c.Params.Get("championshipID")
+func (ch *ChampionshipHandler) deleteChampionship(ctx *gin.Context) {
+	id, exist := ctx.Params.Get("championshipID")
 	if !exist {
 		log.Printf("championship id was not provided")
-		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
+		ctx.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing id parameter")))
 		return
 	}
 
-	err := ch.ChampionshipService.DeleteChampionship(id)
+	err := ch.ChampionshipService.DeleteChampionship(ctx, id)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	c.Status(http.StatusOK)
+	ctx.Status(http.StatusOK)
 }
 
 // swagger:route POST /championships/{championshipID}/seasons/{seasonID} Championship RegisterSeason
@@ -243,29 +243,29 @@ func (ch *ChampionshipHandler) deleteChampionship(c *gin.Context) {
 //		200: RegisterSeasonResponse
 //		400: ErrorResponse
 //		500: ErrorResponse
-func (ch *ChampionshipHandler) registerSeason(c *gin.Context) {
-	championshipID, exist := c.Params.Get("championshipID")
+func (ch *ChampionshipHandler) registerSeason(ctx *gin.Context) {
+	championshipID, exist := ctx.Params.Get("championshipID")
 	if !exist {
 		log.Printf("championship id was not provided")
-		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing championshipID parameter")))
+		ctx.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing championshipID parameter")))
 		return
 	}
 
-	seasonID, exist := c.Params.Get("seasonID")
+	seasonID, exist := ctx.Params.Get("seasonID")
 	if !exist {
 		log.Printf("season id was not provided")
-		c.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing seasonID parameter")))
+		ctx.JSON(http.StatusBadRequest, models.NewErrorResponse(errors.New("missing seasonID parameter")))
 		return
 	}
 
-	cs, err := ch.ChampionshipService.RegisterSeason(championshipID, seasonID)
+	cs, err := ch.ChampionshipService.RegisterSeason(ctx, championshipID, seasonID)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	c.JSON(http.StatusCreated, models.NewChampionshipSeason(cs))
+	ctx.JSON(http.StatusCreated, models.NewChampionshipSeason(cs))
 }
 
 // swagger:route GET /championships/{championshipID}/seasons Championship getChampionshipsSeasons
@@ -289,39 +289,39 @@ func (ch *ChampionshipHandler) registerSeason(c *gin.Context) {
 //		200: GetChampionshipsSeasonsResponse
 //		400: ErrorResponse
 //		500: ErrorResponse
-func (ch *ChampionshipHandler) getChampionshipsSeasons(c *gin.Context) {
+func (ch *ChampionshipHandler) getChampionshipsSeasons(ctx *gin.Context) {
 	csFilter := domain.ChampionshipSeasonFilter{}
 
-	championshipID, exist := c.Params.Get("championshipID")
+	championshipID, exist := ctx.Params.Get("championshipID")
 	if exist {
 		championshipUUID, err := uuid.Parse(championshipID)
 		if err != nil {
 			log.Printf("an error occured: %v", err)
-			c.JSON(http.StatusBadRequest, models.NewErrorResponse(internal.ErrInvalidUUID))
+			ctx.JSON(http.StatusBadRequest, models.NewErrorResponse(internal.ErrInvalidUUID))
 			return
 		}
 
 		csFilter.ChampionshipID = championshipUUID.String()
 	}
 
-	seasonID := c.Query("seasonID")
+	seasonID := ctx.Query("seasonID")
 	if seasonID != "" {
 		seasonUUID, err := uuid.Parse(seasonID)
 		if err != nil {
 			log.Printf("an error occured: %v", err)
-			c.JSON(http.StatusBadRequest, models.NewErrorResponse(internal.ErrInvalidUUID))
+			ctx.JSON(http.StatusBadRequest, models.NewErrorResponse(internal.ErrInvalidUUID))
 			return
 		}
 
 		csFilter.SeasonID = seasonUUID.String()
 	}
 
-	csss, err := ch.ChampionshipService.GetChampionshipsSeasons(csFilter)
+	csss, err := ch.ChampionshipService.GetChampionshipsSeasons(ctx, csFilter)
 	if err != nil {
 		log.Printf("an error occured: %v", err)
-		c.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, models.NewErrorResponse(err))
 		return
 	}
 
-	c.JSON(http.StatusOK, models.NewChampionshipsSeasons(csss))
+	ctx.JSON(http.StatusOK, models.NewChampionshipsSeasons(csss))
 }
